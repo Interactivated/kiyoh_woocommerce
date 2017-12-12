@@ -1,11 +1,11 @@
-=== Kiyoh customer review ===
+## Kiyoh customer review
 Requires at least: 3.6.0
 Tested up to: 4.7.2
 Stable tag: kiyoh, review, customerreview, rate, send mail
 
 The Interactivated.me developed plugin for the Kiyoh reviews network, you can easily integrate Kiyoh into your Wordpress.
 
-== Description ==
+## Description
 With the newest release of the official Kiyoh reviews plugin you get a complete solution for integrating the most used review network of The Netherlands into your webstore. Gaining popularity rapidly internationally. A full overview of the capabilities of the latest plugin:
 
     Multistore support
@@ -24,13 +24,13 @@ KiyOh users can now automatically collect customer reviews, publish them and sha
 
 Also see www.kiyoh.nl for more information.
 
-== Installation ==
+## Installation
 1. Upload or extract the kiyoh_customerreview folder to your site\'s /wp-content/plugins/ directory. You can also use the Add new option found in the Plugins menu in WordPress.
 2. Enable the plugin from the Plugins menu in WordPress.
 3. Install & enable WooCommerce plugin from the Plugins menu in WordPress.
 4. You should install and enable Group plugin (https://wordpress.org/plugins/groups) if you want groups to use "Exclude customer groups"
 
-== Screenshots ==
+## Screenshots
 1. Settings
 2. setting widget 
 3. widget
