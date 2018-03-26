@@ -31,7 +31,7 @@ class kiyoh_review extends WP_Widget
             $url = $data->company->url;
             $rating = $data->company->total_score;
             $reviews = $data->company->total_reviews;
-            $upload_dir = wp_upload_dir();
+			$image_dir = plugins_url(  "/", __FILE__)
             ?>
 
             <div class="kiyoh-shop-snippets">
@@ -61,14 +61,14 @@ class kiyoh_review extends WP_Widget
                 .kiyoh-shop-snippets .rating-box {
                     float: left;
                     width: 91px;
-                    background: url('<?php echo $upload_dir['baseurl']?>/rating-sprite.png') no-repeat 0 -15px;
+                    background: url('<?php echo $image_dir;?>img/rating-sprite.png') no-repeat 0 -15px;
                     height: 15px;
                     margin: 11px 10px 10px 10px;
                 }
 
                 .kiyoh-shop-snippets .rating-box .rating {
                     height: 15px;
-                    background: url('<?php echo $upload_dir['baseurl']?>/rating-sprite.png') no-repeat 0 0;
+                    background: url('<?php echo $image_dir;?>img/rating-sprite.png') no-repeat 0 0;
                     margin: 0;
                     padding: 0;
                 }
@@ -185,7 +185,7 @@ class kiyoh_review extends WP_Widget
         return $instance;
     }
 
-    public function receiveData($company_id)
+    public function receiveDataNow($company_id)
     {
         $kiyoh_connector = get_option('kiyoh_option_connector');
         $kiyoh_server = get_option('kiyoh_option_server');
@@ -198,8 +198,41 @@ class kiyoh_review extends WP_Widget
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         $output = curl_exec($ch);
         curl_close($ch);
-        $data = simplexml_load_string($output);
-        return $data;
+
+        if ($output != "Too many requests. Please try again later.")
+		{
+	      	update_option('kiyoh_cache_con_data',$output);
+        }
+    }
+
+    public function receiveData($company_id)
+    {
+        $data = get_option('kiyoh_cache_con_data');
+
+		if ( empty( $data ) )
+		{
+		   $this->receiveDataNow($company_id);
+		   $data = get_option('kiyoh_cache_con_data');
+ 		}
+
+		$time = get_option('kiyoh_cache_con_update');
+
+		if ( (time()- $time) > 600)
+		{
+		  wp_schedule_single_event( time() + 10, 'receiveDataCron_event', array($company_id ) );
+	  	  update_option('kiyoh_cache_con_update',time() );
+		}
+
+		try
+		{
+		  $dataxml = simplexml_load_string($data);
+		}
+		catch (Exception $e)
+		{
+		  $dataxml = '';
+		}
+
+        return $dataxml;
     }
 
     public function copyRatingSprite()
