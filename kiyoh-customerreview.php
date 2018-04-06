@@ -6,7 +6,7 @@
 Plugin Name: Kiyoh Customerreview
 Plugin URI: http://www.interactivated.me/
 Description: KiyOh.nl-gebruikers kunnen met deze plug-in automatisch klantbeoordelingen verzamelen, publiceren en delen in social media. Wanneer een klant een bestelling heeft gemaakt in uw Magento Shop, wordt een e-mail uitnodiging automatisch na een paar dagen verstuurd om u te beoordelen. De e-mail wordt uit naam en e-mailadres van uw organisatie gestuurd, zodat uw klanten u herkennen. De e-mail tekst is aanpasbaar en bevat een persoonlijke en veilige link naar de pagina om te beoordelen. Vanaf nu worden de beoordelingen dus automatisch verzameld, gepubliceerd en gedeeld. Dat is nog eens handig!
-Version: 1.0.9
+Version: 1.0.10
 Author: kiyoh
 Author URI: http://www.interactivated.me/webshop-modules/kiyoh-magento.html
 License: GPLv2 or later
@@ -386,7 +386,25 @@ function kiyoh_settings_page()
     <?php
 }
 
-//widget kiyoh_review
+add_action( 'receiveDataCron_event', 'receiveDataCron', 10, 3 );
+
+function receiveDataCron($company_id)
+{
+    $kiyoh_connector = get_option('kiyoh_option_connector');
+    $kiyoh_server = get_option('kiyoh_option_server');
+
+    $file = 'https://www.' . $kiyoh_server . '/xml/recent_company_reviews.xml?connectorcode=' . $kiyoh_connector . '&company_id=' . $company_id;
+
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $file);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    $output = curl_exec($ch);
+    curl_close($ch);
+    update_option('kiyoh_cache_con_data', $output);
+    update_option('kiyoh_cache_con_update', time());
+}
+
 require_once KIYOH__PLUGIN_DIR . 'widget.php';
 function register_kiyoh_review()
 {
