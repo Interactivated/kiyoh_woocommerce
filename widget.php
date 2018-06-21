@@ -43,10 +43,10 @@ class kiyoh_review extends WP_Widget
                         <meta itemprop="bestRating" content="<?php echo $maxrating; ?>">
                         <p>
                             <a href="<?php echo $url; ?>" target="_blank" class="kiyoh-link">
-                                <?php echo __('Rating') ?> <span
-                                    itemprop="ratingValue"><?php echo $rating; ?></span> <?php echo sprintf(__('out of %s, based on'), $maxrating) ?>
+                                <?php echo __('Rating', 'kiyoh-customerreview') ?> <span
+                                    itemprop="ratingValue"><?php echo $rating; ?></span> <?php echo sprintf(__('out of %s, based on', 'kiyoh-customerreview'), $maxrating) ?>
                                 <span
-                                    itemprop="ratingCount"><?php echo $reviews; ?></span> <?php echo __('customer reviews'); ?>
+                                    itemprop="ratingCount"><?php echo $reviews; ?></span> <?php echo __('customer reviews', 'kiyoh-customerreview'); ?>
                             </a>
                         </p>
                     </div>
@@ -110,11 +110,11 @@ class kiyoh_review extends WP_Widget
         $company_id = (isset($instance['company_id'])) ? $instance['company_id'] : '';
         ?>
         <p style="padding: 0 0 10px;">
-            <label for="<?php echo $this->get_field_id('company_id'); ?>">Company Id</label>
+            <label for="<?php echo $this->get_field_id('company_id'); ?>"><?php echo __('Company Id', 'kiyoh-customerreview'); ?></label>
             <input id="<?php echo $this->get_field_id('company_id'); ?>"
                    name="<?php echo $this->get_field_name('company_id'); ?>"
                    value="<?php echo esc_attr($company_id); ?>" type="text" style="width:100%;" required/><br>
-            <span>Enter here your "Company Id" as registered in your KiyOh account.</span>
+            <span><?php echo __('Enter here your "Company Id" as registered in your KiyOh account.', 'kiyoh-customerreview'); ?></span>
         </p>
         <?php
     }

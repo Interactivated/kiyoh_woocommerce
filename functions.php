@@ -36,7 +36,7 @@ function kiyoh_curlproblem_admin_notice()
 {
     ?>
     <div class="notice notice-error">
-        <p><?php _e('Kiyoh: php extension Curl is not installed'); ?></p>
+        <p><?php _e('Kiyoh: php extension Curl is not installed', 'kiyoh-customerreview'); ?></p>
     </div>
     <?php
 }
