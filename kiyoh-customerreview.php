@@ -1,16 +1,16 @@
 <?php
 /**
- * @package kiyoh_customerreview
+ * @package kiyoh-customerreview
  */
 /*
 Plugin Name: Kiyoh Customerreview
 Plugin URI: http://www.interactivated.me/
-Description: KiyOh.nl-gebruikers kunnen met deze plug-in automatisch klantbeoordelingen verzamelen, publiceren en delen in social media. Wanneer een klant een bestelling heeft gemaakt in uw Magento Shop, wordt een e-mail uitnodiging automatisch na een paar dagen verstuurd om u te beoordelen. De e-mail wordt uit naam en e-mailadres van uw organisatie gestuurd, zodat uw klanten u herkennen. De e-mail tekst is aanpasbaar en bevat een persoonlijke en veilige link naar de pagina om te beoordelen. Vanaf nu worden de beoordelingen dus automatisch verzameld, gepubliceerd en gedeeld. Dat is nog eens handig!
-Version: 1.0.10
+Description: KiyOh.nl-gebruikers kunnen met deze plug-in automatisch klantbeoordelingen verzamelen, publiceren en delen in social media. Wanneer een klant een bestelling heeft gemaakt in uw WooCommerce, wordt een e-mail uitnodiging automatisch na een paar dagen verstuurd om u te beoordelen. De e-mail wordt uit naam en e-mailadres van uw organisatie gestuurd, zodat uw klanten u herkennen. De e-mail tekst is aanpasbaar en bevat een persoonlijke en veilige link naar de pagina om te beoordelen. Vanaf nu worden de beoordelingen dus automatisch verzameld, gepubliceerd en gedeeld. Dat is nog eens handig!
+Version: 1.0.11
 Author: kiyoh
-Author URI: http://www.interactivated.me/webshop-modules/kiyoh-magento.html
+Author URI: http://www.interactivated.me/webshop-modules/kiyoh-reviews-module-for-woocommerce.html
 License: GPLv2 or later
-Text Domain: kiyoh_customerreview
+Text Domain: kiyoh-customerreview
 Domain Path: /i18n/languages/
 */
 
@@ -138,23 +138,23 @@ function kiyoh_settings_page()
     ?>
     <div class="wrap">
         <?php if (is_plugin_active('woocommerce/woocommerce.php')) : ?>
-            <h2>Kiyoh Customerreview Settings</h2>
+        <h2><?php echo __('Kiyoh Customerreview Settings', 'kiyoh-customerreview'); ?></h2>
             <?php if (isset($_GET['settings-updated'])) { ?>
                 <div id="message" class="updated">
-                    <p><strong><?php _e('Settings saved.') ?></strong></p>
+                <p><strong><?php _e('Settings saved.', 'kiyoh-customerreview') ?></strong></p>
                 </div>
             <?php } ?>
             <form method="post" action="options.php">
                 <?php settings_fields('kiyoh-settings-group'); ?>
                 <table class="form-table">
                     <tr valign="top">
-                        <th scope="row">Module Version</th>
+            <th scope="row"><?php echo __('Module Version', 'kiyoh-customerreview'); ?></th>
                         <td>
                             <p>1.0.8</p>
                         </td>
                     </tr>
                     <tr valign="top">
-                        <th scope="row">Enable</th>
+                        <th scope="row"><?php echo __('Enable', 'kiyoh-customerreview'); ?></th>
                         <td>
                             <select name="kiyoh_option_enable">
                                 <option value="Yes" <?php selected(get_option('kiyoh_option_enable'), 'Yes'); ?>>Yes
@@ -162,56 +162,50 @@ function kiyoh_settings_page()
                                 <option value="No" <?php selected(get_option('kiyoh_option_enable'), 'No'); ?>>No
                                 </option>
                             </select>
-                            <p>Recommended Value is Yes. On setting it to NO, module ll stop sending email invites to
-                                customers.</p>
+                            <p><?php echo __('Recommended Value is Yes. On setting it to NO, module ll stop sending email invites to customers.', 'kiyoh-customerreview'); ?></p>
                         </td>
                     </tr>
                     <tr valign="top">
-                        <th scope="row">Email send method</th>
+                        <th scope="row"><?php echo __('Email send method', 'kiyoh-customerreview'); ?></th>
                         <td>
                             <select name="kiyoh_option_send_method" required>
                                 <option
                                     value="" <?php selected(get_option('kiyoh_option_send_method'), false); ?>></option>
-                                <option value="my" <?php selected(get_option('kiyoh_option_send_method'), 'my'); ?>>Send
-                                    emails from my server
+                                <option value="my" <?php selected(get_option('kiyoh_option_send_method'), 'my'); ?>><?php echo __('Send emails from my server', 'kiyoh-customerreview'); ?>
                                 </option>
                                 <option
                                     value="kiyoh" <?php selected(get_option('kiyoh_option_send_method'), 'kiyoh'); ?>>
-                                    Send emails from Kiyoh server
+                                    <?php echo __('Send emails from Kiyoh server', 'kiyoh-customerreview'); ?>
                                 </option>
                             </select>
                         </td>
                     </tr>
                     <tr valign="top" class="myserver">
-                        <th scope="row">Company Name</th>
+                        <th scope="row"><?php echo __('Company Name', 'kiyoh-customerreview'); ?></th>
                         <td><input type="text" name="kiyoh_option_company_name"
                                    value="<?php echo get_option('kiyoh_option_company_name'); ?>"/></td>
                     </tr>
                     <tr valign="top" class="myserver">
-                        <th scope="row">Link rate</th>
+                        <th scope="row"><?php echo __('Link rate', 'kiyoh-customerreview'); ?></th>
                         <td><input type="text" name="kiyoh_option_link"
                                    value="<?php echo get_option('kiyoh_option_link'); ?>"/>
-                            <p>Enter here the link to the review (Easy Invite Link). Please contact Kiyoh and they
-                                provide you the correct link.</p>
+                            <p><?php echo __('Enter here the link to the review (Easy Invite Link). Please contact Kiyoh and they provide you the correct link.', 'kiyoh-customerreview'); ?></p>
                         </td>
                     </tr>
                     <tr valign="top" class="myserver">
-                        <th scope="row">Sender Email</th>
+                        <th scope="row"><?php echo __('Sender Email', 'kiyoh-customerreview'); ?></th>
                         <td><input type="email" name="kiyoh_option_email"
                                    value="<?php echo get_option('kiyoh_option_email'); ?>"/></td>
                     </tr>
                     <tr valign="top">
-                        <th scope="row">Enter delay</th>
+                        <th scope="row"><?php echo __('Enter delay', 'kiyoh-customerreview'); ?></th>
                         <td><input type="text" name="kiyoh_option_delay"
                                    value="<?php echo get_option('kiyoh_option_delay'); ?>"/>
-                            <p>Enter here the delay(number of days) after which you would like to send review invite
-                                email to your customer. This delay applies after customer event (to be selected at next
-                                option). You may enter 0 to send review invite email immediately after customer event.
-                                Cron should be configured for values>0</p>
+                            <p><?php echo __('Enter here the delay(number of days) after which you would like to send review invite option). You may enter 0 to send review invite email immediately after customer event. Cron should be configured for values>0', 'kiyoh-customerreview'); ?></p>
                         </td>
                     </tr>
                     <tr valign="top">
-                        <th scope="row">Select Event</th>
+                        <th scope="row"><?php echo __('Select Event', 'kiyoh-customerreview'); ?></th>
                         <td>
                             <select name="kiyoh_option_event">
                                 <option value="" <?php selected(get_option('kiyoh_option_event'), ''); ?>></option>
@@ -224,12 +218,11 @@ function kiyoh_settings_page()
                                     Order status change
                                 </option>
                             </select>
-                            <p>Enter here the event after which you would like to send review invite email to your
-                                customer.</p>
+                            <p><?php echo __('Enter here the event after which you would like to send review invite email to your customer.', 'kiyoh-customerreview'); ?></p>
                         </td>
                     </tr>
                     <tr valign="top" style="display: none;" id="status">
-                        <th scope="row">Order Status</th>
+                        <th scope="row"><?php echo __('Order Status', 'kiyoh-customerreview'); ?></th>
                         <td>
                             <select name="kiyoh_option_order_status[]" multiple>
                                 <?php
@@ -267,7 +260,7 @@ function kiyoh_settings_page()
                         </td>
                     </tr>
                     <tr valign="top">
-                        <th scope="row">Select Server</th>
+                        <th scope="row"><?php echo __('Select Server', 'kiyoh-customerreview'); ?></th>
                         <td>
                             <select name="kiyoh_option_server">
                                 <option
@@ -282,24 +275,23 @@ function kiyoh_settings_page()
                         </td>
                     </tr>
                     <tr valign="top" class="kiyohserver">
-                        <th scope="row">Enter Connector</th>
+                        <th scope="row"><?php echo __('Enter Connector', 'kiyoh-customerreview'); ?></th>
                         <td>
                             <p><input type="text" name="kiyoh_option_connector"
                                       value="<?php echo get_option('kiyoh_option_connector'); ?>" required/></p>
-                            <p>Enter here the Kiyoh Connector Code from your Kiyoh Account.</p>
+                            <p><?php echo __('Enter here the Kiyoh Connector Code from your Kiyoh Account.', 'kiyoh-customerreview'); ?></p>
                         </td>
                     </tr>
                     <tr valign="top" class="kiyohserver">
-                        <th scope="row">Company Email</th>
+                        <th scope="row"><?php echo __('Company Email', 'kiyoh-customerreview'); ?></th>
                         <td>
                             <p><input type="text" name="kiyoh_option_custom_user"
                                       value="<?php echo get_option('kiyoh_option_custom_user'); ?>" required/></p>
-                            <p>Enter here your "company email address" as registered in your KiyOh account. Not the
-                                "user email address"! </p>
+                            <p><?php echo __('Enter here your "company email address" as registered in your KiyOh account. Not the "user email address"!', 'kiyoh-customerreview'); ?></p>
                         </td>
                     </tr>
                     <tr valign="top" class="kiyohserver dependsonkiyohserver">
-                        <th scope="row">Language email template</th>
+                        <th scope="row"><?php echo __('Language email template', 'kiyoh-customerreview'); ?></th>
                         <td>
                             <select name="kiyoh_option_email_template_language">
                                 <option
@@ -362,25 +354,25 @@ function kiyoh_settings_page()
             </tr>-->
                     <?php if (kiyoh_checkExistsTable('groups_group') && is_plugin_active('groups/groups.php')) : ?>
                         <tr valign="top">
-                            <th scope="row">Exclude customer groups</th>
+                            <th scope="row"><?php echo __('Exclude customer groups', 'kiyoh-customerreview'); ?></th>
                             <td><?php kiyoh_selectExculeGroups(); ?></td>
                         </tr>
                     <?php endif; ?>
                     <tr valign="top" class="myserver">
-                        <th scope="row">Email template (English)</th>
+                        <th scope="row"><?php echo __('Email template (English)', 'kiyoh-customerreview'); ?></th>
                         <td>
                             <?php wp_editor(str_replace("\n", '<br />', get_option('kiyoh_option_tmpl_en')), 'kiyoh_option_tmpl_en', array('media_buttons' => true, 'quicktags' => false)); ?>
                         </td>
                     </tr>
                     <tr valign="top" class="myserver">
-                        <th scope="row">Email template (Dutch)</th>
+                        <th scope="row"><?php echo __('Email template (Dutch)', 'kiyoh-customerreview'); ?></th>
                         <td><?php wp_editor(str_replace("\n", '<br />', get_option('kiyoh_option_tmpl_du')), 'kiyoh_option_tmpl_du', array('media_buttons' => true, 'quicktags' => false, 'editor_css' => true)); ?></td>
                     </tr>
                 </table>
                 <?php submit_button(); ?>
             </form>
         <?php else: ?>
-            <h2>You need install and activate WooCommerce plugin</h2>
+            <h2><?php echo __('You need install and activate WooCommerce plugin', 'kiyoh-customerreview'); ?></h2>
         <?php endif; ?>
     </div>
     <?php
@@ -409,6 +401,9 @@ require_once KIYOH__PLUGIN_DIR . 'widget.php';
 function register_kiyoh_review()
 {
     register_widget('kiyoh_review');
+    $locale = apply_filters( 'plugin_locale', get_locale(), 'kiyoh-customerreview' );
+    load_textdomain( 'kiyoh-customerreview', WP_LANG_DIR . '/plugins/kiyoh-customerreview-' . $locale . '.mo' );
+    load_plugin_textdomain( 'kiyoh-customerreview', false, plugin_basename( dirname( __FILE__ ) ) . '/i18n/languages' );
 }
 
 add_action('widgets_init', 'register_kiyoh_review');
