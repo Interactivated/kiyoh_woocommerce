@@ -31,7 +31,7 @@ class kiyoh_review extends WP_Widget
             $url = $data->company->url;
             $rating = $data->company->total_score;
             $reviews = $data->company->total_reviews;
-			$image_dir = plugins_url(  "/", __FILE__)
+            $image_dir = plugins_url("/", __FILE__)
             ?>
 
             <div class="kiyoh-shop-snippets">
@@ -110,7 +110,8 @@ class kiyoh_review extends WP_Widget
         $company_id = (isset($instance['company_id'])) ? $instance['company_id'] : '';
         ?>
         <p style="padding: 0 0 10px;">
-            <label for="<?php echo $this->get_field_id('company_id'); ?>"><?php echo __('Company Id', 'kiyoh-customerreview'); ?></label>
+            <label
+                for="<?php echo $this->get_field_id('company_id'); ?>"><?php echo __('Company Id', 'kiyoh-customerreview'); ?></label>
             <input id="<?php echo $this->get_field_id('company_id'); ?>"
                    name="<?php echo $this->get_field_name('company_id'); ?>"
                    value="<?php echo esc_attr($company_id); ?>" type="text" style="width:100%;" required/><br>
@@ -192,16 +193,10 @@ class kiyoh_review extends WP_Widget
 
         $file = 'https://www.' . $kiyoh_server . '/xml/recent_company_reviews.xml?connectorcode=' . $kiyoh_connector . '&company_id=' . $company_id;
 
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $file);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        $output = curl_exec($ch);
-        curl_close($ch);
+        $output = wp_remote_get($file);
 
-        if ($output != "Too many requests. Please try again later.")
-		{
-	      	update_option('kiyoh_cache_con_data',$output);
+        if ($output['body'] != "Too many requests. Please try again later.") {
+            update_option('kiyoh_cache_con_data', $output['body']);
         }
     }
 
@@ -209,28 +204,30 @@ class kiyoh_review extends WP_Widget
     {
         $data = get_option('kiyoh_cache_con_data');
 
-		if ( empty( $data ) )
-		{
-		   $this->receiveDataNow($company_id);
-		   $data = get_option('kiyoh_cache_con_data');
- 		}
+        if (empty($data)) {
+            $this->receiveDataNow($company_id);
+            $data = get_option('kiyoh_cache_con_data');
+        }
 
-		$time = get_option('kiyoh_cache_con_update');
+        $time = get_option('kiyoh_cache_con_update');
 
-		if ( (time()- $time) > 600)
-		{
-		  wp_schedule_single_event( time() + 10, 'receiveDataCron_event', array($company_id ) );
-	  	  update_option('kiyoh_cache_con_update',time() );
-		}
+        if ((time() - $time) > 600) {
+            wp_schedule_single_event(time() + 10, 'receiveDataCron_event', array($company_id));
+            update_option('kiyoh_cache_con_update', time());
+        }
 
-		try
-		{
-		  $dataxml = simplexml_load_string($data);
-		}
-		catch (Exception $e)
-		{
-		  $dataxml = '';
-		}
+        try {
+            if (is_array($data)) {
+                if (isset($data['body'])) {
+                    $data = $data['body'];
+                } else {
+                    $data = '';
+                }
+            }
+            $dataxml = simplexml_load_string($data);
+        } catch (Exception $e) {
+            $dataxml = '';
+        }
 
         return $dataxml;
     }
