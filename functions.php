@@ -86,28 +86,7 @@ function kiyoh_sendMail($options)
         $kiyoh_lang = $kiyoh_options['email_template_language'];
         $url = 'https://www.' . $kiyoh_server . '/set.php?user=' . $kiyoh_user . '&connector=' . $kiyoh_connector . '&action=' . $kiyoh_action . '&targetMail=' . $email . '&delay=' . $kiyoh_delay . '&language=' . $kiyoh_lang;
 
-        if (!function_exists('curl_version')) {
-            return;
-        }
-        $curl = null;
-        try {
-            // create a new cURL resource
-            $curl = curl_init();
-
-            // set URL and other appropriate options
-            curl_setopt($curl, CURLOPT_URL, $url);
-            curl_setopt($curl, CURLOPT_SSLVERSION, 1);
-            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($curl, CURLOPT_HEADER, false);
-            curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 10);
-            curl_setopt($curl, CURLOPT_TIMEOUT, 10);
-            // grab URL and pass it to the browser
-            $response = curl_exec($curl);
-        } catch (Exception $e) {
-
-        }
-        curl_close($curl);
+        $response = wp_remote_get($url);
     } else {
         add_filter('wp_mail_content_type', 'kiyoh_set_html_content_type');
 

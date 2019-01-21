@@ -6,7 +6,7 @@
 Plugin Name: Kiyoh Customerreview
 Plugin URI: http://www.interactivated.me/
 Description: KiyOh.nl-gebruikers kunnen met deze plug-in automatisch klantbeoordelingen verzamelen, publiceren en delen in social media. Wanneer een klant een bestelling heeft gemaakt in uw WooCommerce, wordt een e-mail uitnodiging automatisch na een paar dagen verstuurd om u te beoordelen. De e-mail wordt uit naam en e-mailadres van uw organisatie gestuurd, zodat uw klanten u herkennen. De e-mail tekst is aanpasbaar en bevat een persoonlijke en veilige link naar de pagina om te beoordelen. Vanaf nu worden de beoordelingen dus automatisch verzameld, gepubliceerd en gedeeld. Dat is nog eens handig!
-Version: 1.0.11
+Version: 1.0.13
 Author: kiyoh
 Author URI: http://www.interactivated.me/webshop-modules/kiyoh-reviews-module-for-woocommerce.html
 License: GPLv2 or later
@@ -98,7 +98,7 @@ function check_kiyoh_review($post_id, $post)
 
 function enqueue_my_scripts()
 {
-    wp_enqueue_script('kiyoh-script', KIYOH__PLUGIN_URL . 'js/script.js');
+    wp_enqueue_script('kiyoh-script', KIYOH__PLUGIN_URL . 'js/script.js',array('jquery'),'1.0.13');
 }
 
 add_action('admin_init', 'enqueue_my_scripts');
@@ -150,7 +150,7 @@ function kiyoh_settings_page()
                     <tr valign="top">
             <th scope="row"><?php echo __('Module Version', 'kiyoh-customerreview'); ?></th>
                         <td>
-                            <p>1.0.8</p>
+                            <p>1.0.13</p>
                         </td>
                     </tr>
                     <tr valign="top">
@@ -387,13 +387,9 @@ function receiveDataCron($company_id)
 
     $file = 'https://www.' . $kiyoh_server . '/xml/recent_company_reviews.xml?connectorcode=' . $kiyoh_connector . '&company_id=' . $company_id;
 
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $file);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-    $output = curl_exec($ch);
-    curl_close($ch);
-    update_option('kiyoh_cache_con_data', $output);
+    $response = wp_remote_get($file);
+
+    update_option('kiyoh_cache_con_data', $response['body']);
     update_option('kiyoh_cache_con_update', time());
 }
 
