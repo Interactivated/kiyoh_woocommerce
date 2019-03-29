@@ -12,7 +12,7 @@ class kiyoh_review extends WP_Widget
 
     public function widget($args, $instance)
     {
-        $method = get_option('kiyoh_option_send_method');
+        $method = kiyoh_getOption('kiyoh_option_send_method');
         if ($method == 'kiyoh') {
             $this->widget_new($args, $instance);
         } else {
@@ -97,7 +97,7 @@ class kiyoh_review extends WP_Widget
 
     public function form($instance)
     {
-        $method = get_option('kiyoh_option_send_method');
+        $method = kiyoh_getOption('kiyoh_option_send_method');
         if ($method == 'kiyoh') {
             $this->form_new($instance);
         } else {
@@ -108,16 +108,22 @@ class kiyoh_review extends WP_Widget
     public function form_new($instance)
     {
         $company_id = (isset($instance['company_id'])) ? $instance['company_id'] : '';
-        ?>
-        <p style="padding: 0 0 10px;">
-            <label
-                for="<?php echo $this->get_field_id('company_id'); ?>"><?php echo __('Company Id', 'kiyoh-customerreview'); ?></label>
-            <input id="<?php echo $this->get_field_id('company_id'); ?>"
-                   name="<?php echo $this->get_field_name('company_id'); ?>"
-                   value="<?php echo esc_attr($company_id); ?>" type="text" style="width:100%;" required/><br>
-            <span><?php echo __('Enter here your "Company Id" as registered in your KiyOh account.', 'kiyoh-customerreview'); ?></span>
-        </p>
-        <?php
+        $server = kiyoh_getOption('kiyoh_option_server');
+        if($server=='klantenvertellen.nl'){?>
+            <p> </p>
+            <?php
+        } else {
+            ?>
+            <p style="padding: 0 0 10px;">
+                <label
+                    for="<?php echo $this->get_field_id('company_id'); ?>"><?php echo __('Company Id', 'kiyoh-customerreview'); ?></label>
+                <input id="<?php echo $this->get_field_id('company_id'); ?>"
+                       name="<?php echo $this->get_field_name('company_id'); ?>"
+                       value="<?php echo esc_attr($company_id); ?>" type="text" style="width:100%;" required/><br>
+                <span><?php echo __('Enter here your "Company Id" as registered in your KiyOh account.', 'kiyoh-customerreview'); ?></span>
+            </p>
+            <?php
+        }
     }
 
     public function form_old($instance)
@@ -188,12 +194,23 @@ class kiyoh_review extends WP_Widget
 
     public function receiveDataNow($company_id)
     {
-        $kiyoh_connector = get_option('kiyoh_option_connector');
-        $kiyoh_server = get_option('kiyoh_option_server');
-
+        $kiyoh_connector = kiyoh_getOption('kiyoh_option_connector');
+        $kiyoh_server = kiyoh_getOption('kiyoh_option_server');
+        $args = array();
         $file = 'https://www.' . $kiyoh_server . '/xml/recent_company_reviews.xml?connectorcode=' . $kiyoh_connector . '&company_id=' . $company_id;
+        if($kiyoh_server=='klantenvertellen.nl' || $kiyoh_server=='newkiyoh.com'){
+            $server = 'klantenvertellen.nl';
+            if ($kiyoh_server=='newkiyoh.com'){
+                $server = 'kiyoh.com';
+            }
+            $location_id = kiyoh_getOption('Klantenvertellen_option_locationId');
+            $hash = kiyoh_getOption('Klantenvertellen_option_hash');
+            $file = "https://{$server}/v1/publication/review/external?locationId=" . $location_id;
+            $args = array('headers' => array(
+                'X-Publication-Api-Token'=> $hash ));
+        }
 
-        $output = wp_remote_get($file);
+        $output = wp_remote_get($file,$args);
 
         if ($output['body'] != "Too many requests. Please try again later.") {
             update_option('kiyoh_cache_con_data', $output['body']);
@@ -217,16 +234,32 @@ class kiyoh_review extends WP_Widget
         }
 
         try {
-            if (is_array($data)) {
-                if (isset($data['body'])) {
-                    $data = $data['body'];
-                } else {
-                    $data = '';
+            $sever = kiyoh_getOption('kiyoh_option_server');
+            if ($sever=='klantenvertellen.nl' || $sever=='newkiyoh.com'){
+                $datajson = json_decode($data,true);
+                if ($datajson && !isset($datajson['averageRating'])){
+                    throw new \Exception('incorrect review response');
                 }
+                $dataxml = new StdClass();
+                $company = new StdClass();
+                $company->total_score = $datajson['averageRating'];
+                $company->url = $datajson['viewReviewUrl'];
+                $company->total_reviews = $datajson['numberReviews'];
+                $dataxml->company = $company;
+            } else {
+                if (is_array($data)) {
+                    if (isset($data['body'])) {
+                        $data = $data['body'];
+                    } else {
+                        $data = '';
+                    }
+                }
+                $dataxml = simplexml_load_string($data);
             }
-            $dataxml = simplexml_load_string($data);
         } catch (Exception $e) {
             $dataxml = '';
+            update_option('kiyoh_cache_con_update', '0');
+            update_option('kiyoh_cache_con_data', '');
         }
 
         return $dataxml;
