@@ -1,8 +1,10 @@
 (function () {
     jQuery(document).ready(function () {
-        toogleStatus(300);
-        toogleSendMethod(300);
-        toogleKiyohServer(500);
+        setTimeout(function(){
+            toogleStatus(300);
+            toogleSendMethod(300);
+            toogleKiyohServer(500);
+        },200);
         jQuery('select[name="kiyoh_option_event"]').change(function (event) {
             toogleStatus(300);
         });
@@ -28,8 +30,6 @@
 
     function toogleSendMethod(speed) {
         if (jQuery('select[name="kiyoh_option_send_method"]').length) {
-
-
             var my_event = jQuery('select[name="kiyoh_option_send_method"]').val();
             if (my_event == 'my') {
                 jQuery('.myserver').show(speed);
@@ -47,11 +47,19 @@
     function toogleKiyohServer(speed) {
         if (jQuery('select[name="kiyoh_option_server"]').length) {
             var my_event = jQuery('select[name="kiyoh_option_server"]').val();
-            if (my_event == 'kiyoh.nl') {
-                jQuery('.dependsonkiyohserver').hide(speed);
+            if (my_event == 'klantenvertellen.nl' || my_event=='newkiyoh.com') {
+                jQuery('.dependsonKlantenvertellenserver').show(speed);
+                jQuery('.dependsonkiyoh').hide(speed);
             } else {
-                jQuery('.dependsonkiyohserver').show(speed);
+                jQuery('.dependsonKlantenvertellenserver').hide(speed);
+                jQuery('.dependsonkiyoh').show(speed);
             }
+            if (my_event == 'kiyoh.com') {
+                jQuery('.dependsonkiyohserver').show(speed);
+            } else {
+                jQuery('.dependsonkiyohserver').hide(speed);
+            }
+
         }
     }
 })();
