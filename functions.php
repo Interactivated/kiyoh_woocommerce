@@ -1,35 +1,81 @@
 <?php
-function kiyoh_getOption()
+function kiyoh_getOption($option = null,$forceLang = null)
 {
     $kiyoh_options = array();
-    $kiyoh_options['enable'] = get_option('kiyoh_option_enable');
-    $kiyoh_options['send_method'] = get_option('kiyoh_option_send_method');
-    $kiyoh_options['connector'] = get_option('kiyoh_option_connector');
-    $kiyoh_options['custom_user'] = get_option('kiyoh_option_custom_user');
-    $kiyoh_options['email_template_language'] = get_option('kiyoh_option_email_template_language');
-    $kiyoh_options['enable_microdata'] = get_option('kiyoh_option_enable_microdata');
-    $kiyoh_options['company_id'] = get_option('kiyoh_option_company_id');
-    $kiyoh_options['link'] = get_option('kiyoh_option_link');
-    $kiyoh_options['email'] = get_option('kiyoh_option_email');
-    $kiyoh_options['delay'] = (int)get_option('kiyoh_option_delay');
-    $kiyoh_options['event'] = (get_option('kiyoh_option_event') == 'Orderstatus') ? get_option('kiyoh_option_order_status') : get_option('kiyoh_option_event');
-    $kiyoh_options['server'] = get_option('kiyoh_option_server');
-    $kiyoh_options['excule_groups'] = kiyoh_getValExculeGroups();
-    $kiyoh_options['tmpl_en'] = get_option('kiyoh_option_tmpl_en');
-    $kiyoh_options['tmpl_en'] = str_replace("\n", '<br />', $kiyoh_options['tmpl_en']);
-    $kiyoh_options['tmpl_du'] = get_option('kiyoh_option_tmpl_du');
-    $kiyoh_options['tmpl_du'] = str_replace("\n", '<br />', $kiyoh_options['tmpl_du']);
-    $kiyoh_options['company_name'] = get_option('kiyoh_option_company_name');
+    $translated = json_decode(get_option('kiyoh_options'), true);
+    $lang = 'all';
+    if (is_array($translated)) {
+        if (defined('ICL_SITEPRESS_VERSION')) {
+            $lang = kiyohGetCurrentLanguage();
+            if($forceLang){
+                $lang = $forceLang;
+            }
+            if (!isset($translated[$lang])) {
+                $lang = 'all';
+            }
+        }
+        $kiyoh_options = $translated[$lang];
+    } else {
+        $kiyoh_options['enable'] = get_option('kiyoh_option_enable');
+        $kiyoh_options['send_method'] = get_option('kiyoh_option_send_method');
+        $kiyoh_options['connector'] = get_option('kiyoh_option_connector');
+        $kiyoh_options['custom_user'] = get_option('kiyoh_option_custom_user');
+        $kiyoh_options['email_template_language'] = get_option('kiyoh_option_email_template_language');
+        $kiyoh_options['enable_microdata'] = get_option('kiyoh_option_enable_microdata');
+        $kiyoh_options['company_id'] = get_option('kiyoh_option_company_id');
+        $kiyoh_options['link'] = get_option('kiyoh_option_link');
+        $kiyoh_options['email'] = get_option('kiyoh_option_email');
+        $kiyoh_options['delay'] = (int)get_option('kiyoh_option_delay');
+        $kiyoh_options['event'] = get_option('kiyoh_option_event');
+        $kiyoh_options['order_status'] = get_option('kiyoh_option_order_status');
+        $kiyoh_options['server'] = get_option('kiyoh_option_server');
+        $kiyoh_options['excule_groups'] = kiyoh_getValExculeGroups();
+        $kiyoh_options['tmpl_en'] = get_option('kiyoh_option_tmpl_en');
+        $kiyoh_options['tmpl_en'] = str_replace("\n", '<br />', $kiyoh_options['tmpl_en']);
+        $kiyoh_options['tmpl_du'] = get_option('kiyoh_option_tmpl_du');
+        $kiyoh_options['tmpl_du'] = str_replace("\n", '<br />', $kiyoh_options['tmpl_du']);
+        $kiyoh_options['company_name'] = get_option('kiyoh_option_company_name');
+        $kiyoh_options['hash'] = get_option('Klantenvertellen_option_hash');
+        $kiyoh_options['locationId'] = get_option('Klantenvertellen_option_locationId');
+        $kiyoh_options['language1'] = get_option('Klantenvertellen_option_email_template_language');
 
-    if ($kiyoh_options['enable'] == 'Yes' && $kiyoh_options['send_method'] == 'kiyoh' && !function_exists('curl_version')) {
-        update_option('kiyoh_option_send_method', 'my');
-        $kiyoh_options['send_method'] = 'my';
-        add_action('admin_notices', 'kiyoh_curlproblem_admin_notice');
+
+        if ($kiyoh_options['enable'] == 'Yes' && $kiyoh_options['send_method'] == 'kiyoh' && !function_exists('curl_version')) {
+            update_option('kiyoh_option_send_method', 'my');
+            $kiyoh_options['send_method'] = 'my';
+            add_action('admin_notices', 'kiyoh_curlproblem_admin_notice');
+        }
+        $translated = [$lang => $kiyoh_options];
+        update_option('kiyoh_options', json_encode($translated));
     }
-    if ($kiyoh_options['event'] == 'Shipping') {
-        $kiyoh_options['event'] = 'processing';
+    if ($option) {
+        $tmp = kiyoh_getShortOptionName($option);
+
+        if (isset($kiyoh_options[$option])) {
+            return $kiyoh_options[$option];
+        } elseif (isset($kiyoh_options[$tmp])) {
+            return $kiyoh_options[$tmp];
+        } else {
+            return '';
+        }
     }
+
     return $kiyoh_options;
+}
+
+/**
+ * @return string
+ */
+function kiyohGetCurrentLanguage()
+{
+    if (isset($_REQUEST['lang']) && is_admin()){
+        return $_REQUEST['lang'];
+    }
+    $lang = apply_filters('wpml_current_language', NULL);
+    if (!$lang) {
+        $lang = 'all';
+    }
+    return $lang;
 }
 
 function kiyoh_curlproblem_admin_notice()
@@ -45,7 +91,7 @@ function kiyoh_getValExculeGroups()
 {
     $result = array();
     if (is_plugin_active('groups/groups.php')) {
-        $options = get_option('kiyoh_option_excule');
+        $options = kiyoh_getOption('kiyoh_option_excule');
         if (kiyoh_checkExistsTable('groups_group')) {
             global $table_prefix;
             global $wpdb;
@@ -84,9 +130,32 @@ function kiyoh_sendMail($options)
         $kiyoh_action = 'sendInvitation';
         $kiyoh_delay = $kiyoh_options['delay'];
         $kiyoh_lang = $kiyoh_options['email_template_language'];
-        $url = 'https://www.' . $kiyoh_server . '/set.php?user=' . $kiyoh_user . '&connector=' . $kiyoh_connector . '&action=' . $kiyoh_action . '&targetMail=' . $email . '&delay=' . $kiyoh_delay . '&language=' . $kiyoh_lang;
-
-        $response = wp_remote_get($url);
+        if (in_array($kiyoh_server, array('kiyoh.nl', 'kiyoh.com'))) {
+            $url = 'https://www.' . $kiyoh_server . '/set.php?user=' . $kiyoh_user . '&connector=' . $kiyoh_connector . '&action=' . $kiyoh_action . '&targetMail=' . $email . '&delay=' . $kiyoh_delay . '&language=' . $kiyoh_lang;
+            $response = wp_remote_get($url);
+        } elseif ($kiyoh_server == 'klantenvertellen.nl' || $kiyoh_server == 'newkiyoh.com') {
+            $hash = $kiyoh_options['hash'];
+            $location_id = $kiyoh_options['locationId'];
+            $language_1 = $kiyoh_options['language1'];
+            $first_name = $options['firstname'];
+            $last_name = $options['lastname'];
+            if ($kiyoh_delay == 0) {
+                $kiyoh_delay = 1;
+            }
+            $server = 'klantenvertellen.nl';
+            if ($kiyoh_server == 'newkiyoh.com') {
+                $server = 'kiyoh.com';
+            }
+            $url = "https://{$server}/v1/invite/external?" .
+                "hash={$hash}" .
+                "&location_id={$location_id}" .
+                "&invite_email={$email}" .
+                "&delay={$kiyoh_delay}" .
+                "&first_name={$first_name}" .
+                "&last_name={$last_name}" .
+                "&language={$language_1}";
+            $response = wp_remote_get($url);
+        }
     } else {
         add_filter('wp_mail_content_type', 'kiyoh_set_html_content_type');
 
@@ -167,7 +236,7 @@ function kiyoh_selectExculeGroups()
         }
         ksort($arr_group);
         //$arr_group[1] = 'General';
-        $options = get_option('kiyoh_option_excule');
+        $options = kiyoh_getOption('kiyoh_option_excule');
         foreach ($arr_group as $key => $group) {
             echo '<fieldset>';
             echo '<label for="kiyoh_option_excule' . $key . '">';
@@ -240,7 +309,8 @@ function kiyoh_insertRow($table_name, $order_id, $status)
     }
 }
 
-function kiyohProccessPurchaseAction(){
+function kiyohProccessPurchaseAction()
+{
     $kiyoh_options = kiyoh_getOption();
     $delay = time() + $kiyoh_options['delay'] * 24 * 3600;
     $url = trim(strip_tags($_SERVER['REQUEST_URI']));
@@ -255,21 +325,25 @@ function kiyohProccessPurchaseAction(){
                 }
             }
             if (kiyoh_checkExculeGroups($kiyoh_options['excule_groups'], $user_id) == true) {
-                if (strpos($url,'order-received/')!==false) {
+                if (strpos($url, 'order-received/') !== false) {
                     $url = explode('order-received/', $url);
                     $url = $url[1];
                     $url = explode("/", $url);
                     $order_id = (int)$url[0];
                 } else {
-                    if(isset($_GET['order-received'])){
+                    if (isset($_GET['order-received'])) {
                         $order_id = strip_tags($_GET['order-received']);
                     }
                 }
                 if ($order_id > 0) {
                     $order = new WC_Order($order_id);
+                    $wpmlLanguage = $order->get_meta('wpml_language');
+                    if ($wpmlLanguage){
+                        $kiyoh_options = kiyoh_getOption(null,$wpmlLanguage);
+                    }
                     $email = $order->get_billing_email();
                     if (!$email) return;
-                    $optionsSendMail = array('option' => $kiyoh_options, 'email' => $email);
+                    $optionsSendMail = array('option' => $kiyoh_options, 'email' => $email, 'firstname' => $order->get_shipping_first_name(),'lastname' => $order->get_shipping_last_name());
                     kiyoh_createTableKiyoh();
                     global $wpdb;
                     $table_name = $wpdb->prefix . 'kiyoh';
@@ -287,4 +361,30 @@ function kiyohProccessPurchaseAction(){
             }
         }
     }
+}
+function kiyoh_getShortOptionName($option){
+    $key = false;
+    if (substr($option,0,13)=='kiyoh_option_'){
+        $key = substr($option,13);
+    } elseif($option=='Klantenvertellen_option_email_template_language'){
+        $key = 'language1';
+    } elseif(substr($option,0,24)=='Klantenvertellen_option_'){
+        $key = substr($option,24);
+    } else {
+        return false;
+    }
+    return $key;
+}
+function kiyoh_update_option($value, $option, $old_value){
+    $key = kiyoh_getShortOptionName($option);
+    if (!$key){
+        return $value;
+    }
+    $translated = json_decode(get_option('kiyoh_options'), true);
+    if(!isset($translated[kiyohGetCurrentLanguage()])){
+        $translated[kiyohGetCurrentLanguage()] = array();
+    }
+    $translated[kiyohGetCurrentLanguage()][$key] = $value;
+    update_option('kiyoh_options', json_encode($translated));
+    return $value;
 }
