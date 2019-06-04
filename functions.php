@@ -138,10 +138,6 @@ function kiyoh_sendMail($options)
             $location_id = $kiyoh_options['locationId'];
             $language_1 = $kiyoh_options['language1'];
             $first_name = $options['firstname'];
-            $last_name = $options['lastname'];
-            if ($kiyoh_delay == 0) {
-                $kiyoh_delay = 1;
-            }
             $server = 'klantenvertellen.nl';
             if ($kiyoh_server == 'newkiyoh.com') {
                 $server = 'kiyoh.com';
