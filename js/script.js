@@ -16,6 +16,9 @@
         jQuery('select[name="kiyoh_option_server"]').change(function (event) {
             toogleKiyohServer(300);
         });
+        jQuery('#kiyohform #submit').on('click',function(){
+            disableNotvisibleElements();
+        });
     });
     function toogleStatus(speed) {
         if (jQuery('select[name="kiyoh_option_event"]').length) {
@@ -41,6 +44,7 @@
                 jQuery('.myserver').hide(speed);
                 jQuery('.kiyohserver').show(speed);
             }
+            toogleKiyohServer(speed);
         }
     }
 
@@ -62,4 +66,12 @@
 
         }
     }
+    function disableNotvisibleElements(evt) {
+
+        // Disable things that we don't want to validate.
+        jQuery(".required:hidden").attr("disabled", true);
+
+        jQuery(".required:visible").removeAttr("disabled", true);
+    };
+
 })();

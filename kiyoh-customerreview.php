@@ -6,7 +6,7 @@
 Plugin Name: Kiyoh Customerreview
 Plugin URI: http://www.interactivated.me/
 Description: KiyOh.nl-gebruikers kunnen met deze plug-in automatisch klantbeoordelingen verzamelen, publiceren en delen in social media. Wanneer een klant een bestelling heeft gemaakt in uw WooCommerce, wordt een e-mail uitnodiging automatisch na een paar dagen verstuurd om u te beoordelen. De e-mail wordt uit naam en e-mailadres van uw organisatie gestuurd, zodat uw klanten u herkennen. De e-mail tekst is aanpasbaar en bevat een persoonlijke en veilige link naar de pagina om te beoordelen. Vanaf nu worden de beoordelingen dus automatisch verzameld, gepubliceerd en gedeeld. Dat is nog eens handig!
-Version: 1.0.16
+Version: 1.0.17
 Author: kiyoh
 Author URI: http://www.interactivated.me/webshop-modules/kiyoh-reviews-module-for-woocommerce.html
 License: GPLv2 or later
@@ -105,7 +105,7 @@ function check_kiyoh_review($post_id, $post)
 
 function enqueue_my_scripts()
 {
-    wp_enqueue_script('kiyoh-script', KIYOH__PLUGIN_URL . 'js/script.js', array('jquery'), '1.0.15');
+    wp_enqueue_script('kiyoh-script', KIYOH__PLUGIN_URL . 'js/script.js', array('jquery'), '1.0.17');
 }
 
 add_action('admin_init', 'enqueue_my_scripts');
@@ -157,13 +157,13 @@ function kiyoh_settings_page()
                     <p><strong><?php _e('Settings saved.', 'kiyoh-customerreview') ?></strong></p>
                 </div>
             <?php } ?>
-            <form method="post" action="options.php">
+            <form method="post" action="options.php" id="kiyohform">
                 <?php settings_fields('kiyoh-settings-group'); ?>
                 <table class="form-table">
                     <tr valign="top">
                         <th scope="row"><?php echo __('Module Version', 'kiyoh-customerreview'); ?></th>
                         <td>
-                            <p>1.0.16</p>
+                            <p>1.0.17</p>
                         </td>
                     </tr>
                     <tr valign="top">
@@ -182,7 +182,7 @@ function kiyoh_settings_page()
                     <tr valign="top">
                         <th scope="row"><?php echo __('Email send method', 'kiyoh-customerreview'); ?></th>
                         <td>
-                            <select name="kiyoh_option_send_method" required>
+                            <select name="kiyoh_option_send_method" required class="required">
                                 <option
                                     value="" <?php selected(kiyoh_getOption('kiyoh_option_send_method'), false); ?>></option>
                                 <option
@@ -295,7 +295,7 @@ function kiyoh_settings_page()
                         <th scope="row"><?php echo __('Enter Connector', 'kiyoh-customerreview'); ?></th>
                         <td>
                             <p><input type="text" name="kiyoh_option_connector"
-                                      value="<?php echo kiyoh_getOption('kiyoh_option_connector'); ?>" required/></p>
+                                      value="<?php echo kiyoh_getOption('kiyoh_option_connector'); ?>" required class="required"/></p>
                             <p><?php echo __('Enter here the Kiyoh Connector Code from your Kiyoh Account.', 'kiyoh-customerreview'); ?></p>
                         </td>
                     </tr>
@@ -303,7 +303,7 @@ function kiyoh_settings_page()
                         <th scope="row"><?php echo __('Company Email', 'kiyoh-customerreview'); ?></th>
                         <td>
                             <p><input type="text" name="kiyoh_option_custom_user"
-                                      value="<?php echo kiyoh_getOption('kiyoh_option_custom_user'); ?>" required/></p>
+                                      value="<?php echo kiyoh_getOption('kiyoh_option_custom_user'); ?>" required class="required"/></p>
                             <p><?php echo __('Enter here your "company email address" as registered in your KiyOh account. Not the "user email address"!', 'kiyoh-customerreview'); ?></p>
                         </td>
                     </tr>
@@ -312,7 +312,7 @@ function kiyoh_settings_page()
                         <th scope="row"><?php echo __('Enter hash', 'Klantenvertellen-customerreview'); ?></th>
                         <td>
                             <p><input type="text" name="Klantenvertellen_option_hash"
-                                      value="<?php echo kiyoh_getOption('Klantenvertellen_option_hash'); ?>" required/>
+                                      value="<?php echo kiyoh_getOption('Klantenvertellen_option_hash'); ?>" required class="required"/>
                             </p>
                             <p><?php echo __('Enter here the Hash Code from your Klantenvertellen Account.', 'Klantenvertellen-customerreview'); ?></p>
                         </td>
@@ -322,7 +322,7 @@ function kiyoh_settings_page()
                         <td>
                             <p><input type="text" name="Klantenvertellen_option_locationId"
                                       value="<?php echo kiyoh_getOption('Klantenvertellen_option_locationId'); ?>"
-                                      required/></p>
+                                      required class="required"/></p>
                             <p><?php echo __('Enter here the Location Id from your Klantenvertellen Account.', 'Klantenvertellen-customerreview'); ?></p>
                         </td>
                     </tr>
@@ -332,7 +332,7 @@ function kiyoh_settings_page()
                         <td>
                             <p><input type="text" name="Klantenvertellen_option_email_template_language"
                                       value="<?php echo kiyoh_getOption('Klantenvertellen_option_email_template_language'); ?>"
-                                      required/></p>
+                                      required class="required"/></p>
                             <p><?php echo __('Language', 'Klantenvertellen-customerreview'); ?></p>
                         </td>
                     </tr>
