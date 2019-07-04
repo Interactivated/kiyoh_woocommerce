@@ -6,7 +6,7 @@
 Plugin Name: Kiyoh Customerreview
 Plugin URI: http://www.interactivated.me/
 Description: KiyOh.nl-gebruikers kunnen met deze plug-in automatisch klantbeoordelingen verzamelen, publiceren en delen in social media. Wanneer een klant een bestelling heeft gemaakt in uw WooCommerce, wordt een e-mail uitnodiging automatisch na een paar dagen verstuurd om u te beoordelen. De e-mail wordt uit naam en e-mailadres van uw organisatie gestuurd, zodat uw klanten u herkennen. De e-mail tekst is aanpasbaar en bevat een persoonlijke en veilige link naar de pagina om te beoordelen. Vanaf nu worden de beoordelingen dus automatisch verzameld, gepubliceerd en gedeeld. Dat is nog eens handig!
-Version: 1.0.17
+Version: 1.0.18
 Author: kiyoh
 Author URI: http://www.interactivated.me/webshop-modules/kiyoh-reviews-module-for-woocommerce.html
 License: GPLv2 or later
@@ -18,6 +18,7 @@ define('KIYOH__PLUGIN_URL', plugin_dir_url(__FILE__));
 define('KIYOH__PLUGIN_DIR', plugin_dir_path(__FILE__));
 
 require_once(KIYOH__PLUGIN_DIR . 'functions.php');
+require_once(KIYOH__PLUGIN_DIR . 'widget.php');
 include_once(ABSPATH . 'wp-admin/includes/plugin.php');
 
 if (is_plugin_active('woocommerce/woocommerce.php')) {
@@ -409,21 +410,13 @@ function kiyoh_settings_page()
 }
 
 add_action('receiveDataCron_event', 'receiveDataCron', 10, 3);
-
-function receiveDataCron($company_id)
+//do_action('receiveDataCron_event');
+function receiveDataCron()
 {
-    $kiyoh_connector = kiyoh_getOption('kiyoh_option_connector');
-    $kiyoh_server = kiyoh_getOption('kiyoh_option_server');
-
-    $file = 'https://www.' . $kiyoh_server . '/xml/recent_company_reviews.xml?connectorcode=' . $kiyoh_connector . '&company_id=' . $company_id;
-
-    $response = wp_remote_get($file);
-
-    update_option('kiyoh_cache_con_data', $response['body']);
-    update_option('kiyoh_cache_con_update', time());
+    $widget = new \kiyoh_review();
+    $widget->receiveDataNow();
 }
 
-require_once KIYOH__PLUGIN_DIR . 'widget.php';
 function register_kiyoh_review()
 {
     register_widget('kiyoh_review');
