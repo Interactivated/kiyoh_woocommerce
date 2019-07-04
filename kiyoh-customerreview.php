@@ -164,7 +164,7 @@ function kiyoh_settings_page()
                     <tr valign="top">
                         <th scope="row"><?php echo __('Module Version', 'kiyoh-customerreview'); ?></th>
                         <td>
-                            <p>1.0.17</p>
+                            <p>1.0.18</p>
                         </td>
                     </tr>
                     <tr valign="top">

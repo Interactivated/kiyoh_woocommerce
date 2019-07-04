@@ -12,14 +12,12 @@ class kiyoh_review extends WP_Widget
 
     public function widget($args, $instance)
     {
-        echo $args['before_widget'];
         $method = kiyoh_getOption('kiyoh_option_send_method');
         if ($method == 'kiyoh') {
             $this->widget_new($args, $instance);
         } else {
             $this->widget_old($args, $instance);
         }
-        echo $args['after_widget'];
     }
 
     public function widget_new($args, $instance)
@@ -35,7 +33,7 @@ class kiyoh_review extends WP_Widget
             ?>
 
             <?php echo $args['before_widget']; ?>
-	    <div class="kiyoh-shop-snippets">
+	        <div class="kiyoh-shop-snippets">
                 <div class="rating-box">
                     <div class="rating" style="width:<?php echo $rating_percentage; ?>%"></div>
                 </div>
@@ -74,7 +72,7 @@ class kiyoh_review extends WP_Widget
                     padding: 0;
                 }
             </style>
-	    <?php echo $args['after_widget']; ?>
+	        <?php echo $args['after_widget']; ?>
         <?php endif;
     }
 
