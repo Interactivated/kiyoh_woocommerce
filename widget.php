@@ -34,7 +34,8 @@ class kiyoh_review extends WP_Widget
             $image_dir = plugins_url("/", __FILE__)
             ?>
 
-            <div class="kiyoh-shop-snippets">
+            <?php echo $args['before_widget']; ?>
+	    <div class="kiyoh-shop-snippets">
                 <div class="rating-box">
                     <div class="rating" style="width:<?php echo $rating_percentage; ?>%"></div>
                 </div>
@@ -73,6 +74,7 @@ class kiyoh_review extends WP_Widget
                     padding: 0;
                 }
             </style>
+	    <?php echo $args['after_widget']; ?>
         <?php endif;
     }
 
