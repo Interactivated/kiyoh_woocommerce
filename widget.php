@@ -18,13 +18,11 @@ class kiyoh_review extends WP_Widget
         } else {
             $this->widget_old($args, $instance);
         }
-
     }
 
     public function widget_new($args, $instance)
     {
-        $company_id = $instance['company_id'];
-        $data = $this->receiveData($company_id);
+        $data = $this->receiveData();
         if (isset($data->company->total_score)):
             $rating_percentage = $data->company->total_score * 10;
             $maxrating = 10;
@@ -35,7 +33,7 @@ class kiyoh_review extends WP_Widget
             ?>
 
             <?php echo $args['before_widget']; ?>
-	    <div class="kiyoh-shop-snippets">
+	        <div class="kiyoh-shop-snippets">
                 <div class="rating-box">
                     <div class="rating" style="width:<?php echo $rating_percentage; ?>%"></div>
                 </div>
@@ -74,7 +72,7 @@ class kiyoh_review extends WP_Widget
                     padding: 0;
                 }
             </style>
-	    <?php echo $args['after_widget']; ?>
+	        <?php echo $args['after_widget']; ?>
         <?php endif;
     }
 
@@ -194,8 +192,9 @@ class kiyoh_review extends WP_Widget
         return $instance;
     }
 
-    public function receiveDataNow($company_id)
+    public function receiveDataNow()
     {
+        $company_id = kiyoh_getOption('kiyoh_option_companyId');
         $kiyoh_connector = kiyoh_getOption('kiyoh_option_connector');
         $kiyoh_server = kiyoh_getOption('kiyoh_option_server');
         $args = array();
@@ -219,19 +218,19 @@ class kiyoh_review extends WP_Widget
         }
     }
 
-    public function receiveData($company_id)
+    public function receiveData()
     {
         $data = get_option('kiyoh_cache_con_data');
 
         if (empty($data)) {
-            $this->receiveDataNow($company_id);
+            $this->receiveDataNow();
             $data = get_option('kiyoh_cache_con_data');
         }
 
         $time = get_option('kiyoh_cache_con_update');
 
         if ((time() - $time) > 600) {
-            wp_schedule_single_event(time() + 10, 'receiveDataCron_event', array($company_id));
+            wp_schedule_single_event(time() + 10, 'receiveDataCron_event', array());
             update_option('kiyoh_cache_con_update', time());
         }
 
@@ -239,7 +238,7 @@ class kiyoh_review extends WP_Widget
             $sever = kiyoh_getOption('kiyoh_option_server');
             if ($sever=='klantenvertellen.nl' || $sever=='newkiyoh.com'){
                 $datajson = json_decode($data,true);
-                if ($datajson && !isset($datajson['averageRating'])){
+                if (!$datajson || ($datajson && !isset($datajson['averageRating']))){
                     throw new \Exception('incorrect review response');
                 }
                 $dataxml = new StdClass();
