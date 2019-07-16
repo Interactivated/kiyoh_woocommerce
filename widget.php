@@ -22,7 +22,7 @@ class kiyoh_review extends WP_Widget
 
     public function widget_new($args, $instance)
     {
-        $data = $this->receiveData();
+        $data = $this->receiveData($instance);
         if (isset($data->company->total_score)):
             $rating_percentage = $data->company->total_score * 10;
             $maxrating = 10;
@@ -109,7 +109,7 @@ class kiyoh_review extends WP_Widget
     {
         $company_id = (isset($instance['company_id'])) ? $instance['company_id'] : '';
         $server = kiyoh_getOption('kiyoh_option_server');
-        if($server=='klantenvertellen.nl'){?>
+        if($server=='klantenvertellen.nl' || $server=='newkiyoh.com'){?>
             <p> </p>
             <?php
         } else {
@@ -192,9 +192,12 @@ class kiyoh_review extends WP_Widget
         return $instance;
     }
 
-    public function receiveDataNow()
+    public function receiveDataNow($instance)
     {
-        $company_id = kiyoh_getOption('kiyoh_option_companyId');
+        $company_id = '';
+        if(isset($instance['company_id'])){
+            $company_id = $instance['company_id'];
+        }
         $kiyoh_connector = kiyoh_getOption('kiyoh_option_connector');
         $kiyoh_server = kiyoh_getOption('kiyoh_option_server');
         $args = array();
@@ -218,19 +221,19 @@ class kiyoh_review extends WP_Widget
         }
     }
 
-    public function receiveData()
+    public function receiveData($instance)
     {
         $data = get_option('kiyoh_cache_con_data');
-
-        if (empty($data)) {
-            $this->receiveDataNow();
+        $datajson = json_decode($data,true);
+        if (empty($data) || !$datajson) {
+            $this->receiveDataNow($instance);
             $data = get_option('kiyoh_cache_con_data');
         }
 
         $time = get_option('kiyoh_cache_con_update');
 
         if ((time() - $time) > 600) {
-            wp_schedule_single_event(time() + 10, 'receiveDataCron_event', array());
+            wp_schedule_single_event(time() + 10, 'receiveDataCron_event', array('instance'=>$instance));
             update_option('kiyoh_cache_con_update', time());
         }
 
