@@ -1,6 +1,6 @@
 === Kiyoh customer review ===
 Requires at least: 3.6.0
-Tested up to: 4.7.2
+Tested up to: 5.2.2
 Stable tag: kiyoh, review, customerreview, rate, send mail
 
 The Interactivated.me developed plugin for the Kiyoh reviews network, you can easily integrate Kiyoh into your Wordpress.
@@ -41,3 +41,6 @@ Also see www.kiyoh.nl for more information.
 = 1.0.8 =
 * Fixed: email obtain problem
 * Fixed: some users can't save plugin settings from admin and see error
+
+= 1.0.20 =
+* testing with wordpress 5.2.2
