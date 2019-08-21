@@ -131,25 +131,37 @@ function kiyoh_sendMail($options)
         $kiyoh_delay = $kiyoh_options['delay'];
         $kiyoh_lang = $kiyoh_options['email_template_language'];
         if (in_array($kiyoh_server, array('kiyoh.nl', 'kiyoh.com'))) {
-            $url = 'https://www.' . $kiyoh_server . '/set.php?user=' . $kiyoh_user . '&connector=' . $kiyoh_connector . '&action=' . $kiyoh_action . '&targetMail=' . $email . '&delay=' . $kiyoh_delay . '&language=' . $kiyoh_lang;
+
+            $request = http_build_query(array(
+                'user' => $kiyoh_user,
+                'connector' => $kiyoh_connector,
+                'action' => $kiyoh_action,
+                'targetMail' => $email,
+                'delay' => $kiyoh_delay,
+                'language' => $kiyoh_lang
+            ));
+            $url = 'https://www.' . $kiyoh_server . '/set.php?'.  $request;
             $response = wp_remote_get($url);
         } elseif ($kiyoh_server == 'klantenvertellen.nl' || $kiyoh_server == 'newkiyoh.com') {
             $hash = $kiyoh_options['hash'];
             $location_id = $kiyoh_options['locationId'];
             $language_1 = $kiyoh_options['language1'];
             $first_name = $options['firstname'];
+            $last_name = $options['lastname'];
             $server = 'klantenvertellen.nl';
             if ($kiyoh_server == 'newkiyoh.com') {
                 $server = 'kiyoh.com';
             }
-            $url = "https://{$server}/v1/invite/external?" .
-                "hash={$hash}" .
-                "&location_id={$location_id}" .
-                "&invite_email={$email}" .
-                "&delay={$kiyoh_delay}" .
-                "&first_name={$first_name}" .
-                "&last_name={$last_name}" .
-                "&language={$language_1}";
+            $request = http_build_query(array(
+                'hash' => $hash,
+                'location_id' => $location_id,
+                'invite_email' => $kiyoh_action,
+                'delay' => $kiyoh_delay,
+                'first_name' => $first_name,
+                'last_name' => $last_name,
+                'language' => $language_1
+            ));
+            $url = "https://{$server}/v1/invite/external?" . $request;
             $response = wp_remote_get($url);
         }
     } else {
