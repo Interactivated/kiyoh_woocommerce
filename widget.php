@@ -200,7 +200,7 @@ class kiyoh_review extends WP_Widget
         }
         $kiyoh_connector = kiyoh_getOption('kiyoh_option_connector');
         $kiyoh_server = kiyoh_getOption('kiyoh_option_server');
-        $args = array();
+        $args = array('timeout'=>1);
         $file = 'https://www.' . $kiyoh_server . '/xml/recent_company_reviews.xml?connectorcode=' . $kiyoh_connector . '&company_id=' . $company_id;
         if($kiyoh_server=='klantenvertellen.nl' || $kiyoh_server=='newkiyoh.com'){
             $server = 'klantenvertellen.nl';
@@ -210,8 +210,8 @@ class kiyoh_review extends WP_Widget
             $location_id = kiyoh_getOption('Klantenvertellen_option_locationId');
             $hash = kiyoh_getOption('Klantenvertellen_option_hash');
             $file = "https://{$server}/v1/publication/review/external?locationId=" . $location_id;
-            $args = array('headers' => array(
-                'X-Publication-Api-Token'=> $hash ));
+            $args = array_merge($args,array('headers' => array(
+                'X-Publication-Api-Token'=> $hash )));
         }
 
         $output = wp_remote_get($file,$args);
@@ -225,7 +225,7 @@ class kiyoh_review extends WP_Widget
     {
         $data = get_option('kiyoh_cache_con_data');
         $datajson = json_decode($data,true);
-        if (empty($data) || !$datajson) {
+        if ( empty($data) || !$datajson) {
             $this->receiveDataNow($instance);
             $data = get_option('kiyoh_cache_con_data');
         }

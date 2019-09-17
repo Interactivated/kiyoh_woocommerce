@@ -143,7 +143,7 @@ function kiyoh_sendMail($options)
                 'language' => $kiyoh_lang
             ));
             $url = 'https://www.' . $kiyoh_server . '/set.php?'.  $request;
-            $response = wp_remote_get($url,array('timeout'=>0.2));
+            $response = wp_remote_get($url,array('timeout'=>2));
         } elseif ($kiyoh_server == 'klantenvertellen.nl' || $kiyoh_server == 'newkiyoh.com') {
             $hash = $kiyoh_options['hash'];
             $location_id = $kiyoh_options['locationId'];
@@ -164,7 +164,7 @@ function kiyoh_sendMail($options)
                 'language' => $language_1
             ));
             $url = "https://{$server}/v1/invite/external?" . $request;
-            $response = wp_remote_get($url,array('timeout'=>0.2));
+            $response = wp_remote_get($url,array('timeout'=>2));
         }
     } else {
         add_filter('wp_mail_content_type', 'kiyoh_set_html_content_type');

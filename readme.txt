@@ -47,3 +47,6 @@ Also see www.kiyoh.nl for more information.
 
 = 1.0.21 =
 * set curl timeout 200ms
+
+= 1.0.22 =
+* set curl timeout 2s for orders
