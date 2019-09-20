@@ -1,5 +1,5 @@
 <?php
-function kiyoh_getOption($option = null,$forceLang = null)
+function kiyoh_getOption($option = null, $forceLang = null)
 {
     $kiyoh_options = array();
     $translated = json_decode(get_option('kiyoh_options'), true);
@@ -7,7 +7,7 @@ function kiyoh_getOption($option = null,$forceLang = null)
     if (is_array($translated)) {
         if (defined('ICL_SITEPRESS_VERSION')) {
             $lang = kiyohGetCurrentLanguage();
-            if($forceLang){
+            if ($forceLang) {
                 $lang = $forceLang;
             }
             if (!isset($translated[$lang])) {
@@ -68,7 +68,7 @@ function kiyoh_getOption($option = null,$forceLang = null)
  */
 function kiyohGetCurrentLanguage()
 {
-    if (isset($_REQUEST['lang']) && is_admin()){
+    if (isset($_REQUEST['lang']) && is_admin()) {
         return $_REQUEST['lang'];
     }
     $lang = apply_filters('wpml_current_language', NULL);
@@ -78,6 +78,9 @@ function kiyohGetCurrentLanguage()
     return $lang;
 }
 
+/**
+ * depricated
+ */
 function kiyoh_curlproblem_admin_notice()
 {
     ?>
@@ -140,8 +143,8 @@ function kiyoh_sendMail($options)
                 'delay' => $kiyoh_delay,
                 'language' => $kiyoh_lang
             ));
-            $url = 'https://www.' . $kiyoh_server . '/set.php?'.  $request;
-            $response = wp_remote_get($url);
+            $url = 'https://www.' . $kiyoh_server . '/set.php?' . $request;
+            $response = wp_remote_get($url, array('timeout' => 2));
         } elseif ($kiyoh_server == 'klantenvertellen.nl' || $kiyoh_server == 'newkiyoh.com') {
             $hash = $kiyoh_options['hash'];
             $location_id = $kiyoh_options['locationId'];
@@ -162,7 +165,7 @@ function kiyoh_sendMail($options)
                 'language' => $language_1
             ));
             $url = "https://{$server}/v1/invite/external?" . $request;
-            $response = wp_remote_get($url);
+            $response = wp_remote_get($url, array('timeout' => 2));
         }
     } else {
         add_filter('wp_mail_content_type', 'kiyoh_set_html_content_type');
@@ -346,12 +349,12 @@ function kiyohProccessPurchaseAction()
                 if ($order_id > 0) {
                     $order = new WC_Order($order_id);
                     $wpmlLanguage = $order->get_meta('wpml_language');
-                    if ($wpmlLanguage){
-                        $kiyoh_options = kiyoh_getOption(null,$wpmlLanguage);
+                    if ($wpmlLanguage) {
+                        $kiyoh_options = kiyoh_getOption(null, $wpmlLanguage);
                     }
                     $email = $order->get_billing_email();
                     if (!$email) return;
-                    $optionsSendMail = array('option' => $kiyoh_options, 'email' => $email, 'firstname' => $order->get_shipping_first_name(),'lastname' => $order->get_shipping_last_name());
+                    $optionsSendMail = array('option' => $kiyoh_options, 'email' => $email, 'firstname' => $order->get_shipping_first_name(), 'lastname' => $order->get_shipping_last_name());
                     kiyoh_createTableKiyoh();
                     global $wpdb;
                     $table_name = $wpdb->prefix . 'kiyoh';
@@ -370,26 +373,30 @@ function kiyohProccessPurchaseAction()
         }
     }
 }
-function kiyoh_getShortOptionName($option){
+
+function kiyoh_getShortOptionName($option)
+{
     $key = false;
-    if (substr($option,0,13)=='kiyoh_option_'){
-        $key = substr($option,13);
-    } elseif($option=='Klantenvertellen_option_email_template_language'){
+    if (substr($option, 0, 13) == 'kiyoh_option_') {
+        $key = substr($option, 13);
+    } elseif ($option == 'Klantenvertellen_option_email_template_language') {
         $key = 'language1';
-    } elseif(substr($option,0,24)=='Klantenvertellen_option_'){
-        $key = substr($option,24);
+    } elseif (substr($option, 0, 24) == 'Klantenvertellen_option_') {
+        $key = substr($option, 24);
     } else {
         return false;
     }
     return $key;
 }
-function kiyoh_update_option($value, $option, $old_value){
+
+function kiyoh_update_option($value, $option, $old_value)
+{
     $key = kiyoh_getShortOptionName($option);
-    if (!$key){
+    if (!$key) {
         return $value;
     }
     $translated = json_decode(get_option('kiyoh_options'), true);
-    if(!isset($translated[kiyohGetCurrentLanguage()])){
+    if (!isset($translated[kiyohGetCurrentLanguage()])) {
         $translated[kiyohGetCurrentLanguage()] = array();
     }
     $translated[kiyohGetCurrentLanguage()][$key] = $value;
