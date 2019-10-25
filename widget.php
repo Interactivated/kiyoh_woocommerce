@@ -209,7 +209,7 @@ class kiyoh_review extends WP_Widget
             }
             $location_id = kiyoh_getOption('Klantenvertellen_option_locationId');
             $hash = kiyoh_getOption('Klantenvertellen_option_hash');
-            $file = "https://{$server}/v1/publication/review/external?locationId=" . $location_id;
+            $file = "https://{$server}/v1/publication/review/external/location/statistics?locationId=" . $location_id;
             $args = array_merge($args,array('headers' => array(
                 'X-Publication-Api-Token'=> $hash )));
         }
