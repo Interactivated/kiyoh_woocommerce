@@ -158,7 +158,7 @@ function kiyoh_sendMail($options)
             $request = http_build_query(array(
                 'hash' => $hash,
                 'location_id' => $location_id,
-                'invite_email' => $kiyoh_action,
+                'invite_email' => $email,
                 'delay' => $kiyoh_delay,
                 'first_name' => $first_name,
                 'last_name' => $last_name,
