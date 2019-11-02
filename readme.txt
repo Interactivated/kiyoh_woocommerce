@@ -53,3 +53,6 @@ Also see www.kiyoh.nl for more information.
 
 = 1.0.23 =
 * fixed send incorrect email for invite klantenvertelen and kiyoh.com
+
+= 1.0.24 =
+* optimized fetching review data from klantenvertelen and kiyoh.com
