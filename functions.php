@@ -167,6 +167,10 @@ function kiyoh_sendMail($options)
             $url = "https://{$server}/v1/invite/external?" . $request;
             $response = wp_remote_get($url, array('timeout' => 2));
         }
+        if (isset($response['body'])) {
+            $logdata = date("Y-m-d H:i:s ") . var_export($response['body'],true). "\n";
+            @file_put_contents(get_home_path().'wp-content/kiyoh.log', $logdata, FILE_APPEND);
+        }
     } else {
         add_filter('wp_mail_content_type', 'kiyoh_set_html_content_type');
 
