@@ -62,3 +62,6 @@ Also see www.kiyoh.nl for more information.
 
 = 1.0.26 =
 * support Magento 5.3
+
+= 1.0.27 =
+* fix response wp_remote_get request
