@@ -216,7 +216,7 @@ class kiyoh_review extends WP_Widget
 
         $output = wp_remote_get($file,$args);
 
-        if ($output['body'] != "Too many requests. Please try again later.") {
+        if (is_array($output) && $output['body'] != "Too many requests. Please try again later.") {
             update_option('kiyoh_cache_con_data', $output['body']);
         }
     }
