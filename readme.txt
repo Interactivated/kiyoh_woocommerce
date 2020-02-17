@@ -65,3 +65,6 @@ Also see www.kiyoh.nl for more information.
 
 = 1.0.27 =
 * fix response wp_remote_get request
+
+= 1.0.28 =
+* fix undefined get_home_path function
