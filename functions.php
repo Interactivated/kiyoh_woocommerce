@@ -169,11 +169,11 @@ function kiyoh_sendMail($options)
         }
         if (is_array($response) && isset($response['body'])) {
             $logdata = date("Y-m-d H:i:s ") . var_export($response['body'],true). "\n";
-            @file_put_contents(get_home_path().'wp-content/kiyoh.log', $logdata, FILE_APPEND);
+            @file_put_contents(ABSPATH.'wp-content/kiyoh.log', $logdata, FILE_APPEND);
         }
         if ($response instanceof WP_Error) {
             $logdata = date("Y-m-d H:i:s ") . $response->get_error_message(). "\n";
-            @file_put_contents(get_home_path().'wp-content/kiyoh.log', $logdata, FILE_APPEND);
+            @file_put_contents(ABSPATH.'wp-content/kiyoh.log', $logdata, FILE_APPEND);
         }
     } else {
         add_filter('wp_mail_content_type', 'kiyoh_set_html_content_type');
