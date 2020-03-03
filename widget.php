@@ -37,8 +37,11 @@ class kiyoh_review extends WP_Widget
                 <div class="rating-box">
                     <div class="rating" style="width:<?php echo $rating_percentage; ?>%"></div>
                 </div>
-                <div class="kiyoh-schema" itemscope="itemscope" itemtype="http://schema.org/WebPage">
+                <div class="kiyoh-schema" itemprop="itemReviewed" itemscope="" itemtype="https://schema.org/Organization">
+                    <meta itemprop="name" content="<?php echo get_bloginfo('name')?>">
+                    <meta itemprop="url" content="<?php echo get_bloginfo('url')?>">
                     <div itemprop="aggregateRating" itemscope="itemscope" itemtype="http://schema.org/AggregateRating">
+                        <meta itemprop="worstRating" content="1">
                         <meta itemprop="bestRating" content="<?php echo $maxrating; ?>">
                         <p>
                             <a href="<?php echo $url; ?>" target="_blank" class="kiyoh-link">

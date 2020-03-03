@@ -68,3 +68,6 @@ Also see www.kiyoh.nl for more information.
 
 = 1.0.28 =
 * fix undefined get_home_path function
+
+= 1.0.29 =
+* fix structured microdata
