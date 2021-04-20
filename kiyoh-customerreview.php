@@ -6,7 +6,7 @@
 Plugin Name: Kiyoh Customerreview
 Plugin URI: http://www.interactivated.me/
 Description: KiyOh.nl-gebruikers kunnen met deze plug-in automatisch klantbeoordelingen verzamelen, publiceren en delen in social media. Wanneer een klant een bestelling heeft gemaakt in uw WooCommerce, wordt een e-mail uitnodiging automatisch na een paar dagen verstuurd om u te beoordelen. De e-mail wordt uit naam en e-mailadres van uw organisatie gestuurd, zodat uw klanten u herkennen. De e-mail tekst is aanpasbaar en bevat een persoonlijke en veilige link naar de pagina om te beoordelen. Vanaf nu worden de beoordelingen dus automatisch verzameld, gepubliceerd en gedeeld. Dat is nog eens handig!
-Version: 1.0.24
+Version: 1.0.30
 Author: kiyoh
 Author URI: http://www.interactivated.me/webshop-modules/kiyoh-reviews-module-for-woocommerce.html
 License: GPLv2 or later
@@ -63,7 +63,10 @@ function check_kiyoh_review($post_id, $post)
         $email = $_POST['billing_email'];
     }
     if (!$email) return;
-    $status_old = trim(strip_tags($_POST['post_status']));
+    $status_old = '';
+    if (isset($_POST['post_status'])){
+        $status_old = trim(strip_tags($_POST['post_status']));
+    }
     $status_old = str_replace('wc-', '', $status_old);
 
     if ($status == 'pending' || $status == 'processing' || $status == 'on-hold'
@@ -79,7 +82,10 @@ function check_kiyoh_review($post_id, $post)
             }
         }
         if ($corect_event && $status_old != $status) {
-            $user_id = trim(strip_tags($_POST['customer_user']));
+            $user_id = '';
+            if (isset($_POST['customer_user'])){
+                $user_id = trim(strip_tags($_POST['customer_user']));
+            }
             $user_id = (int)$user_id;
             if (kiyoh_checkExculeGroups($kiyoh_options['excule_groups'], $user_id) == true) {
                 $optionsSendMail = array('option' => $kiyoh_options, 'email' => $email, 'firstname' => $firstname, 'lastname' => $lastname);
@@ -164,7 +170,7 @@ function kiyoh_settings_page()
                     <tr valign="top">
                         <th scope="row"><?php echo __('Module Version', 'kiyoh-customerreview'); ?></th>
                         <td>
-                            <p>1.0.24</p>
+                            <p>1.0.30</p>
                         </td>
                     </tr>
                     <tr valign="top">

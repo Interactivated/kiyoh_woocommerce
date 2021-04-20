@@ -167,6 +167,14 @@ function kiyoh_sendMail($options)
             $url = "https://{$server}/v1/invite/external?" . $request;
             $response = wp_remote_get($url, array('timeout' => 2));
         }
+        if (is_array($response) && isset($response['body'])) {
+            $logdata = date("Y-m-d H:i:s ") . var_export($response['body'],true). "\n";
+            @file_put_contents(ABSPATH.'wp-content/kiyoh.log', $logdata, FILE_APPEND);
+        }
+        if ($response instanceof WP_Error) {
+            $logdata = date("Y-m-d H:i:s ") . $response->get_error_message(). "\n";
+            @file_put_contents(ABSPATH.'wp-content/kiyoh.log', $logdata, FILE_APPEND);
+        }
     } else {
         add_filter('wp_mail_content_type', 'kiyoh_set_html_content_type');
 
@@ -191,7 +199,7 @@ function kiyoh_checkExculeGroups($excule_groups, $user_id)
 {
     //return true or false
     $flag = true;
-    if (count($excule_groups) > 0 && kiyoh_checkExistsTable('groups_user_group') && kiyoh_checkExistsTable('groups_group')) {
+    if (is_array($excule_groups) && count($excule_groups) > 0 && kiyoh_checkExistsTable('groups_user_group') && kiyoh_checkExistsTable('groups_group')) {
         if ($user_id > 0) {
             global $table_prefix;
             global $wpdb;
