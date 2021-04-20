@@ -199,7 +199,7 @@ function kiyoh_checkExculeGroups($excule_groups, $user_id)
 {
     //return true or false
     $flag = true;
-    if (count($excule_groups) > 0 && kiyoh_checkExistsTable('groups_user_group') && kiyoh_checkExistsTable('groups_group')) {
+    if (is_array($excule_groups) && count($excule_groups) > 0 && kiyoh_checkExistsTable('groups_user_group') && kiyoh_checkExistsTable('groups_group')) {
         if ($user_id > 0) {
             global $table_prefix;
             global $wpdb;

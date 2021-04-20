@@ -71,3 +71,6 @@ Also see www.kiyoh.nl for more information.
 
 = 1.0.29 =
 * fix structured microdata
+
+= 1.0.30 =
+* fix count() function error
