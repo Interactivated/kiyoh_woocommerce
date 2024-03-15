@@ -1,13 +1,17 @@
 <?php
-
-//create widget kiyoh_review
+/**
+ * kiyoh_review Widget.
+ *
+ * Displays kiyoh_review widget.
+ *
+ */
 class kiyoh_review extends WP_Widget
 {
-
+    public $show_instance_in_rest = true;
     function __construct()
     {
         $this->copyRatingSprite();
-        parent::__construct('kiyoh_review', 'Kiyoh review', array('description' => 'show Kiyoh review'));
+        parent::__construct('kiyoh_review', 'Kiyoh review', array('description' => 'show Kiyoh review','show_instance_in_rest' => true,));
     }
 
     public function widget($args, $instance)
