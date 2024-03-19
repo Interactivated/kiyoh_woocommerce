@@ -7,11 +7,10 @@
  */
 class kiyoh_review extends WP_Widget
 {
-    public $show_instance_in_rest = true;
     function __construct()
     {
         $this->copyRatingSprite();
-        parent::__construct('kiyoh_review', 'Kiyoh review', array('description' => 'show Kiyoh review','show_instance_in_rest' => true,));
+        parent::__construct('kiyoh_review', 'Kiyoh review', array('description' => 'show Kiyoh review'));
     }
 
     public function widget($args, $instance)
