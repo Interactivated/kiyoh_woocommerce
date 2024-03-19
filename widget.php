@@ -1,9 +1,12 @@
 <?php
-
-//create widget kiyoh_review
+/**
+ * kiyoh_review Widget.
+ *
+ * Displays kiyoh_review widget.
+ *
+ */
 class kiyoh_review extends WP_Widget
 {
-
     function __construct()
     {
         $this->copyRatingSprite();

@@ -1,17 +1,14 @@
 <?php
 /**
- * @package kiyoh-customerreview
- */
-/*
-Plugin Name: Kiyoh Customerreview
-Plugin URI: http://www.interactivated.me/
-Description: KiyOh.nl-gebruikers kunnen met deze plug-in automatisch klantbeoordelingen verzamelen, publiceren en delen in social media. Wanneer een klant een bestelling heeft gemaakt in uw WooCommerce, wordt een e-mail uitnodiging automatisch na een paar dagen verstuurd om u te beoordelen. De e-mail wordt uit naam en e-mailadres van uw organisatie gestuurd, zodat uw klanten u herkennen. De e-mail tekst is aanpasbaar en bevat een persoonlijke en veilige link naar de pagina om te beoordelen. Vanaf nu worden de beoordelingen dus automatisch verzameld, gepubliceerd en gedeeld. Dat is nog eens handig!
-Version: 1.0.30
-Author: kiyoh
-Author URI: http://www.interactivated.me/webshop-modules/kiyoh-reviews-module-for-woocommerce.html
-License: GPLv2 or later
-Text Domain: kiyoh-customerreview
-Domain Path: /i18n/languages/
+ * Plugin Name: Kiyoh Customerreview
+ * Plugin URI: http://www.interactivated.me/
+ * Description: KiyOh.nl-gebruikers kunnen met deze plug-in automatisch klantbeoordelingen verzamelen, publiceren en delen in social media. Wanneer een klant een bestelling heeft gemaakt in uw WooCommerce, wordt een e-mail uitnodiging automatisch na een paar dagen verstuurd om u te beoordelen. De e-mail wordt uit naam en e-mailadres van uw organisatie gestuurd, zodat uw klanten u herkennen. De e-mail tekst is aanpasbaar en bevat een persoonlijke en veilige link naar de pagina om te beoordelen. Vanaf nu worden de beoordelingen dus automatisch verzameld, gepubliceerd en gedeeld. Dat is nog eens handig!
+ * Version: 1.0.31
+ * Author: kiyoh
+ * Author URI: http://www.interactivated.me/webshop-modules/kiyoh-reviews-module-for-woocommerce.html
+ * License: GPLv2 or later
+ * Text Domain: kiyoh-customerreview
+ * Domain Path: /i18n/languages/
 */
 
 define('KIYOH__PLUGIN_URL', plugin_dir_url(__FILE__));
@@ -430,5 +427,9 @@ function register_kiyoh_review()
     load_textdomain('kiyoh-customerreview', WP_LANG_DIR . '/plugins/kiyoh-customerreview-' . $locale . '.mo');
     load_plugin_textdomain('kiyoh-customerreview', false, plugin_basename(dirname(__FILE__)) . '/i18n/languages');
 }
-
 add_action('widgets_init', 'register_kiyoh_review');
+
+function kiyoh_kiyoh_block_init() {
+    register_block_type( __DIR__ . '/build' );
+}
+add_action( 'init', 'kiyoh_kiyoh_block_init' );
