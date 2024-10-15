@@ -3,7 +3,7 @@
  * Plugin Name: Kiyoh Customerreview
  * Plugin URI: http://www.interactivated.me/
  * Description: KiyOh.nl-gebruikers kunnen met deze plug-in automatisch klantbeoordelingen verzamelen, publiceren en delen in social media. Wanneer een klant een bestelling heeft gemaakt in uw WooCommerce, wordt een e-mail uitnodiging automatisch na een paar dagen verstuurd om u te beoordelen. De e-mail wordt uit naam en e-mailadres van uw organisatie gestuurd, zodat uw klanten u herkennen. De e-mail tekst is aanpasbaar en bevat een persoonlijke en veilige link naar de pagina om te beoordelen. Vanaf nu worden de beoordelingen dus automatisch verzameld, gepubliceerd en gedeeld. Dat is nog eens handig!
- * Version: 1.0.31
+ * Version: 1.0.33
  * Author: kiyoh
  * Author URI: http://www.interactivated.me/webshop-modules/kiyoh-reviews-module-for-woocommerce.html
  * License: GPLv2 or later
@@ -27,14 +27,18 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
             }
         }
         add_action("save_post", "check_kiyoh_review", 10, 2);
+        add_action("woocommerce_after_order_object_save", "check_kiyoh_reviewNew", 10, 2);
     }
 }
 
+function check_kiyoh_reviewNew($post, $wc_data_store)
+{
+    check_kiyoh_review($post->id, $post);
+}
 function check_kiyoh_review($post_id, $post)
 {
-
     $kiyoh_options = kiyoh_getOption();
-    if ($post->post_type != 'shop_order') {
+    if ($post->post_type != 'shop_order' && !($post instanceof WC_Order)) {
         return;
     }
     $order = new WC_Order($post_id);
@@ -167,7 +171,7 @@ function kiyoh_settings_page()
                     <tr valign="top">
                         <th scope="row"><?php echo __('Module Version', 'kiyoh-customerreview'); ?></th>
                         <td>
-                            <p>1.0.30</p>
+                            <p>1.0.33</p>
                         </td>
                     </tr>
                     <tr valign="top">

@@ -77,3 +77,9 @@ Also see www.kiyoh.nl for more information.
 
 = 1.0.31 =
 * added block editor support
+
+= 1.0.32 =
+* fixed new woocommerce hook logic
+
+= 1.0.33 =
+* fixed new woocommerce hook logic
