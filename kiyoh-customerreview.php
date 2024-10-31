@@ -27,13 +27,13 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
             }
         }
         add_action("save_post", "check_kiyoh_review", 10, 2);
-        add_action("woocommerce_after_order_object_save", "check_kiyoh_reviewNew", 10, 2);
+        add_action("woocommerce_after_order_object_save", "check_kiyoh_review_on_order_save", 10, 2);
     }
 }
 
-function check_kiyoh_reviewNew($post, $wc_data_store)
+function check_kiyoh_review_on_order_save($post, $wc_data_store)
 {
-    check_kiyoh_review($post->id, $post);
+    check_kiyoh_review($post->get_id(), $post);
 }
 function check_kiyoh_review($post_id, $post)
 {
