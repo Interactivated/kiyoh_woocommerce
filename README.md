@@ -29,7 +29,6 @@ Also see www.kiyoh.nl for more information.
 2. Enable the plugin from the Plugins menu in WordPress.
 3. Install & enable WooCommerce plugin from the Plugins menu in WordPress.
 4. You should install and enable Group plugin (https://wordpress.org/plugins/groups) if you want groups to use "Exclude customer groups"
-5. If you would like to send the mails from your own server follow the cron steps from the instructions [HERE](../master/kiyoh-manual-woocommerce.pdf)
 
 ## Screenshots
 1. Settings
@@ -50,3 +49,9 @@ Also see www.kiyoh.nl for more information.
 
 = 1.0.31 =
 * added block editor support
+
+= 1.0.32 =
+* afixed new woocommerce hook logic
+
+= 1.0.33 =
+* fixed new woocommerce hook logic
