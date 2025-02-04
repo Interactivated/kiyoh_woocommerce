@@ -38,9 +38,11 @@ function check_kiyoh_review_on_order_save($post, $wc_data_store)
 function check_kiyoh_review($post_id, $post)
 {
     $kiyoh_options = kiyoh_getOption();
-    if ($post->post_type != 'shop_order' && !($post instanceof WC_Order)) {
+
+    if (!($post instanceof WC_Order) && $post->post_type != 'shop_order') {
         return;
     }
+    
     $order = new WC_Order($post_id);
     $wpmlLanguage = $order->get_meta('wpml_language');
     if ($wpmlLanguage){
