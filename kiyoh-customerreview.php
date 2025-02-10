@@ -39,7 +39,7 @@ function check_kiyoh_review($post_id, $post)
 {
     $kiyoh_options = kiyoh_getOption();
 
-    if (!($post instanceof WC_Order) && $post->post_type != 'shop_order') {
+    if (!($post instanceof WC_Order)) {
         return;
     }
     
