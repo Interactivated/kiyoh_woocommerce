@@ -83,3 +83,6 @@ Also see www.kiyoh.nl for more information.
 
 = 1.0.33 =
 * fixed new woocommerce hook logic
+
+= 1.0.34 =
+* removed call post_type on WC_Order object
