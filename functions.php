@@ -355,7 +355,7 @@ function kiyohProccessPurchaseAction()
                     }
                 }
                 if ($order_id > 0) {
-                    $order = new WC_Order($order_id);
+                    $order = wc_get_order($order_id);
                     $wpmlLanguage = $order->get_meta('wpml_language');
                     if ($wpmlLanguage) {
                         $kiyoh_options = kiyoh_getOption(null, $wpmlLanguage);

@@ -86,3 +86,6 @@ Also see www.kiyoh.nl for more information.
 
 = 1.0.34 =
 * removed call post_type on WC_Order object
+
+= 1.0.35 =
+* fix bug with getting WC_Order object
