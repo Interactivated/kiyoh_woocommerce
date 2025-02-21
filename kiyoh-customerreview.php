@@ -3,7 +3,7 @@
  * Plugin Name: Kiyoh Customerreview
  * Plugin URI: http://www.interactivated.me/
  * Description: KiyOh.nl-gebruikers kunnen met deze plug-in automatisch klantbeoordelingen verzamelen, publiceren en delen in social media. Wanneer een klant een bestelling heeft gemaakt in uw WooCommerce, wordt een e-mail uitnodiging automatisch na een paar dagen verstuurd om u te beoordelen. De e-mail wordt uit naam en e-mailadres van uw organisatie gestuurd, zodat uw klanten u herkennen. De e-mail tekst is aanpasbaar en bevat een persoonlijke en veilige link naar de pagina om te beoordelen. Vanaf nu worden de beoordelingen dus automatisch verzameld, gepubliceerd en gedeeld. Dat is nog eens handig!
- * Version: 1.0.34
+ * Version: 1.0.35
  * Author: kiyoh
  * Author URI: http://www.interactivated.me/webshop-modules/kiyoh-reviews-module-for-woocommerce.html
  * License: GPLv2 or later
@@ -37,79 +37,82 @@ function check_kiyoh_review_on_order_save($post, $wc_data_store)
 }
 function check_kiyoh_review($post_id, $post)
 {
-    $kiyoh_options = kiyoh_getOption();
-    if (!($post instanceof WC_Order)) {
-        return;
-    }
-    $order = new WC_Order($post_id);
-    $wpmlLanguage = $order->get_meta('wpml_language');
-    if ($wpmlLanguage){
-        $kiyoh_options = kiyoh_getOption(null,$wpmlLanguage);
-    }
-    $status = $order->get_status();
-    $email = false;
-    if (method_exists($order, 'get_billing_email')) {
-        $email = $order->get_billing_email();
-    } elseif (method_exists($order, 'get_address')) {
-        $address = $order->get_address();
-        $email = $address['email'];
-    }
-    $firstname = '';
-    $lastname = '';
-    if (method_exists($order, 'get_billing_first_name')) {
-        $firstname = $order->get_billing_first_name();
-        $lastname = $order->get_billing_last_name();
-    }
-    if (isset($_POST, $_POST['billing_email']) && !empty($_POST['billing_email'])) {
-        $email = $_POST['billing_email'];
-    }
-    if (!$email) return;
-    $status_old = '';
-    if (isset($_POST['post_status'])){
-        $status_old = trim(strip_tags($_POST['post_status']));
-    }
-    $status_old = str_replace('wc-', '', $status_old);
-
-    if ($status == 'pending' || $status == 'processing' || $status == 'on-hold'
-        || $status == 'completed' || $status == 'cancelled' || $status == 'fraud'
-        || $status == 'refunded' || $status == 'failed'
-    ) {
-
-        //check change status, check excule_groups
-        $corect_event = false;
-        if ($kiyoh_options['event'] == 'Orderstatus') {
-            if (in_array($status, $kiyoh_options['order_status'])) {
-                $corect_event = true;
-            }
+    try {
+        $kiyoh_options = kiyoh_getOption();
+        if (!($post instanceof WC_Order)) {
+            return;
         }
-        if ($corect_event && $status_old != $status) {
-            $user_id = '';
-            if (isset($_POST['customer_user'])){
-                $user_id = trim(strip_tags($_POST['customer_user']));
-            }
-            $user_id = (int)$user_id;
-            if (kiyoh_checkExculeGroups($kiyoh_options['excule_groups'], $user_id) == true) {
-                $optionsSendMail = array('option' => $kiyoh_options, 'email' => $email, 'firstname' => $firstname, 'lastname' => $lastname);
+        $order = wc_get_order($post_id);
+        $wpmlLanguage = $order->get_meta('wpml_language');
+        if ($wpmlLanguage) {
+            $kiyoh_options = kiyoh_getOption(null, $wpmlLanguage);
+        }
+        $status = $order->get_status();
+        $email = false;
+        if (method_exists($order, 'get_billing_email')) {
+            $email = $order->get_billing_email();
+        } elseif (method_exists($order, 'get_address')) {
+            $address = $order->get_address();
+            $email = $address['email'];
+        }
+        $firstname = '';
+        $lastname = '';
+        if (method_exists($order, 'get_billing_first_name')) {
+            $firstname = $order->get_billing_first_name();
+            $lastname = $order->get_billing_last_name();
+        }
+        if (isset($_POST, $_POST['billing_email']) && !empty($_POST['billing_email'])) {
+            $email = $_POST['billing_email'];
+        }
+        if (!$email) return;
+        $status_old = '';
+        if (isset($_POST['post_status'])) {
+            $status_old = trim(strip_tags($_POST['post_status']));
+        }
+        $status_old = str_replace('wc-', '', $status_old);
 
-                kiyoh_createTableKiyoh();
-                global $wpdb;
-                $table_name = $wpdb->prefix . 'kiyoh';
-                if ($kiyoh_options['send_method'] == 'kiyoh') {
-                    kiyoh_sendMail($optionsSendMail);
-                } else if (!kiyoh_checkSendedMail($table_name, $order->get_id(), $status)) {
-                    kiyoh_insertRow($table_name, $order->get_id(), $status);
-                    if ($kiyoh_options['delay'] == 0) {
+        if ($status == 'pending' || $status == 'processing' || $status == 'on-hold'
+            || $status == 'completed' || $status == 'cancelled' || $status == 'fraud'
+            || $status == 'refunded' || $status == 'failed'
+        ) {
+
+            //check change status, check excule_groups
+            $corect_event = false;
+            if ($kiyoh_options['event'] == 'Orderstatus') {
+                if (in_array($status, $kiyoh_options['order_status'])) {
+                    $corect_event = true;
+                }
+            }
+            if ($corect_event && $status_old != $status) {
+                $user_id = '';
+                if (isset($_POST['customer_user'])) {
+                    $user_id = trim(strip_tags($_POST['customer_user']));
+                }
+                $user_id = (int)$user_id;
+                if (kiyoh_checkExculeGroups($kiyoh_options['excule_groups'], $user_id) == true) {
+                    $optionsSendMail = array('option' => $kiyoh_options, 'email' => $email, 'firstname' => $firstname, 'lastname' => $lastname);
+
+                    kiyoh_createTableKiyoh();
+                    global $wpdb;
+                    $table_name = $wpdb->prefix . 'kiyoh';
+                    if ($kiyoh_options['send_method'] == 'kiyoh') {
                         kiyoh_sendMail($optionsSendMail);
-                    } else {
-                        $delay = time() + $kiyoh_options['delay'] * 24 * 3600;
-                        wp_schedule_single_event($delay, 'kiyoh_sendMail', array('optionsSendMail' => $optionsSendMail));
+                    } else if (!kiyoh_checkSendedMail($table_name, $order->get_id(), $status)) {
+                        kiyoh_insertRow($table_name, $order->get_id(), $status);
+                        if ($kiyoh_options['delay'] == 0) {
+                            kiyoh_sendMail($optionsSendMail);
+                        } else {
+                            $delay = time() + $kiyoh_options['delay'] * 24 * 3600;
+                            wp_schedule_single_event($delay, 'kiyoh_sendMail', array('optionsSendMail' => $optionsSendMail));
+                        }
                     }
                 }
             }
         }
+    } catch (\Exception $exception){
+        @file_put_contents(ABSPATH.'wp-content/kiyoh.log', $exception->getMessage(), FILE_APPEND);
     }
 }
-//{"all":{"enable":"Yes","send_method":"kiyoh","connector":"asdf","custom_user":"asdf","email_template_language":"","enable_microdata":false,"company_id":false,"link":"","email":"","delay":"0","event":"Purchase","order_status":["pending","processing","on-hold"],"server":"newkiyoh.com","excule_groups":null,"tmpl_en":"","tmpl_du":"","company_name":"","hash":"c2af1092-78fa-45b0-8764-b7ae263391c0","locationId":"000-dtg-demo-kvtilburg-01","language1":"nl","excule":null},"nl":{"enable":"Yes","link":"","email":"","delay":"0","event":"Purchase","order_status":["pending","processing","on-hold"],"server":"klantenvertellen.nl","excule_groups":null,"tmpl_en":"","tmpl_du":"","excule":null,"company_name":"","send_method":"kiyoh","connector":"asdf","custom_user":"asdf","email_template_language":"","hash":"c2af1092-78fa-45b0-8764-b7ae263391c0","locationId":"000-dtg-demo-kvtilburg-01","language1":"nl"},"en":{"enable":"Yes","link":"","email":"","delay":"0","event":"Orderstatus","order_status":["pending","processing","on-hold"],"server":"klantenvertellen.nl","excule_groups":null,"tmpl_en":"","tmpl_du":"","excule":null,"company_name":"","send_method":"kiyoh","connector":"asdf","custom_user":"asdf","email_template_language":"","hash":"c2af1092-78fa-45b0-8764-b7ae263391c0","locationId":"000-dtg-demo-kvtilburg-01","language1":"EN"}}
 
 function enqueue_my_scripts()
 {
