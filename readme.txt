@@ -89,3 +89,6 @@ Also see www.kiyoh.nl for more information.
 
 = 1.0.35 =
 * fix bug with getting WC_Order object
+
+= 1.0.36 =
+* added support module polylang-wc
