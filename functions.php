@@ -14,6 +14,15 @@ function kiyoh_getOption($option = null, $forceLang = null)
                 $lang = 'all';
             }
         }
+        if (defined('POLYLANG_PRO')) {
+            $lang = kiyohGetCurrentLanguage();
+            if ($forceLang) {
+                $lang = $forceLang;
+            }
+            if (!isset($translated[$lang])) {
+                $lang = 'all';
+            }
+        }
         $kiyoh_options = $translated[$lang];
     } else {
         $kiyoh_options['enable'] = get_option('kiyoh_option_enable');
