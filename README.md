@@ -65,5 +65,5 @@ Also see www.kiyoh.nl for more information.
 = 1.0.36 =
 * added support module polylang-wc
 
-i= 1.0.37 =
+= 1.0.37 =
 * hotfix - error if polylang module not installed
