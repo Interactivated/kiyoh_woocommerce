@@ -94,6 +94,7 @@ function check_kiyoh_review($post_id, $post)
                 $user_id = (int)$user_id;
                 if (kiyoh_checkExculeGroups($kiyoh_options['excule_groups'], $user_id) == true) {
                     $optionsSendMail = array('option' => $kiyoh_options, 'email' => $email, 'firstname' => $firstname, 'lastname' => $lastname);
+                    $optionsSendMail = apply_filters('kiyoh_send_mail_options', $optionsSendMail, $order);
 
                     kiyoh_createTableKiyoh();
                     global $wpdb;
@@ -442,4 +443,5 @@ add_action('widgets_init', 'register_kiyoh_review');
 function kiyoh_kiyoh_block_init() {
     register_block_type( __DIR__ . '/build' );
 }
+
 add_action( 'init', 'kiyoh_kiyoh_block_init' );
