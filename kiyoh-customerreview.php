@@ -44,7 +44,7 @@ function check_kiyoh_review($post_id, $post)
         $kiyoh_options = kiyoh_getOption();
         $order = wc_get_order($post_id);
         $wpmlLanguage = $order->get_meta('wpml_language');
-        if ($wpmlLanguage == '') {
+        if ($wpmlLanguage == '' && function_exists('pll_get_post_language')) {
             $wpmlLanguage = pll_get_post_language($order->get_id());
         }
         if ($wpmlLanguage) {
@@ -445,3 +445,4 @@ function kiyoh_kiyoh_block_init() {
 }
 
 add_action( 'init', 'kiyoh_kiyoh_block_init' );
+
