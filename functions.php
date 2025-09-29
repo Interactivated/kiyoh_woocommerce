@@ -372,6 +372,7 @@ function kiyohProccessPurchaseAction()
                     $email = $order->get_billing_email();
                     if (!$email) return;
                     $optionsSendMail = array('option' => $kiyoh_options, 'email' => $email, 'firstname' => $order->get_shipping_first_name(), 'lastname' => $order->get_shipping_last_name());
+					$optionsSendMail = apply_filters('kiyoh_send_mail_options', $optionsSendMail, $order);
                     kiyoh_createTableKiyoh();
                     global $wpdb;
                     $table_name = $wpdb->prefix . 'kiyoh';
@@ -419,4 +420,5 @@ function kiyoh_update_option($value, $option, $old_value)
     $translated[kiyohGetCurrentLanguage()][$key] = $value;
     update_option('kiyoh_options', json_encode($translated));
     return $value;
+
 }
