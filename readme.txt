@@ -95,3 +95,6 @@ Also see www.kiyoh.nl for more information.
 
 = 1.0.37 =
 * hotfix - error if polylang module not installed
+
+= 1.0.38 =
+* add feature - Apply Send Mail options filter to purchase event
