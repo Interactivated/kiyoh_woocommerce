@@ -3,7 +3,7 @@
  * Plugin Name: Kiyoh Customerreview
  * Plugin URI: http://www.interactivated.me/
  * Description: KiyOh.nl-gebruikers kunnen met deze plug-in automatisch klantbeoordelingen verzamelen, publiceren en delen in social media. Wanneer een klant een bestelling heeft gemaakt in uw WooCommerce, wordt een e-mail uitnodiging automatisch na een paar dagen verstuurd om u te beoordelen. De e-mail wordt uit naam en e-mailadres van uw organisatie gestuurd, zodat uw klanten u herkennen. De e-mail tekst is aanpasbaar en bevat een persoonlijke en veilige link naar de pagina om te beoordelen. Vanaf nu worden de beoordelingen dus automatisch verzameld, gepubliceerd en gedeeld. Dat is nog eens handig!
- * Version: 1.0.38
+ * Version: 1.0.39
  * Author: kiyoh
  * Author URI: http://www.interactivated.me/webshop-modules/kiyoh-reviews-module-for-woocommerce.html
  * License: GPLv2 or later
@@ -26,6 +26,7 @@ if (is_plugin_active('woocommerce/woocommerce.php')) {
                 add_action("shutdown", "kiyohProccessPurchaseAction");
             }
         }
+        add_action('shutdown', 'kiyoh_plugin_run_sent_update');
         add_action("save_post", "check_kiyoh_review", 10, 2);
         add_action("woocommerce_after_order_object_save", "check_kiyoh_review_on_order_save", 10, 2);
     }
@@ -100,7 +101,10 @@ function check_kiyoh_review($post_id, $post)
                     global $wpdb;
                     $table_name = $wpdb->prefix . 'kiyoh';
                     if ($kiyoh_options['send_method'] == 'kiyoh') {
-                        kiyoh_sendMail($optionsSendMail);
+                        if (!kiyoh_checkSendedMail($table_name, $order->get_id(), $status)) {
+                            kiyoh_sendMail($optionsSendMail);
+                            kiyoh_insertRow($table_name, $order->get_id(), $status);
+                        }
                     } else if (!kiyoh_checkSendedMail($table_name, $order->get_id(), $status)) {
                         kiyoh_insertRow($table_name, $order->get_id(), $status);
                         if ($kiyoh_options['delay'] == 0) {
@@ -178,7 +182,7 @@ function kiyoh_settings_page()
                     <tr valign="top">
                         <th scope="row"><?php echo __('Module Version', 'kiyoh-customerreview'); ?></th>
                         <td>
-                            <p>1.0.38</p>
+                            <p>1.0.39</p>
                         </td>
                     </tr>
                     <tr valign="top">
@@ -445,3 +449,26 @@ function kiyoh_kiyoh_block_init() {
 }
 
 add_action( 'init', 'kiyoh_kiyoh_block_init' );
+
+/**
+ * fill wp_kiyoh with already sent invitations data
+ * @return void
+ */
+function kiyoh_plugin_run_sent_update() {
+    $current_version = '1';
+    $stored_version = get_option('kiyoh_plugin_run_sent_update');
+    if ($stored_version !== $current_version) {
+        global $wpdb;
+        $kiyoh_options = kiyoh_getOption();
+        if(isset($kiyoh_options['event']) && $kiyoh_options['event']=='Orderstatus'){
+            $status = $kiyoh_options['order_status'][0];
+            $orders = wc_get_orders([
+                'status' => $status,
+            ]);
+            foreach ($orders as $order) {
+                kiyoh_insertRow($wpdb->prefix . 'kiyoh', $order->get_id(), $status);
+            }
+        }
+        update_option('kiyoh_plugin_run_sent_update', $current_version);
+    }
+}

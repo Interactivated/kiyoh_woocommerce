@@ -70,3 +70,6 @@ Also see www.kiyoh.nl for more information.
 
 = 1.0.38 =
 * add feature - Apply Send Mail options filter to purchase event
+
+= 1.0.39 =
+* fixed re-sending invitation after order update
