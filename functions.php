@@ -177,7 +177,7 @@ function kiyoh_sendMail($options)
             $response = wp_remote_get($url, array('timeout' => 2));
         }
         if (is_array($response) && isset($response['body'])) {
-            $logdata = date("Y-m-d H:i:s ") . var_export($response['body'],true). "\n";
+            $logdata = date("Y-m-d H:i:s ") . var_export([$response['body'],'email'=>hash('sha256', $options['email'])],true). "\n";
             @file_put_contents(ABSPATH.'wp-content/kiyoh.log', $logdata, FILE_APPEND);
         }
         if ($response instanceof WP_Error) {
@@ -299,10 +299,15 @@ function kiyoh_createTableKiyoh($table_name = 'kiyoh')
 
 }
 
-function kiyoh_checkSendedMail($table_name, $order_id, $status)
+function kiyoh_checkSendedMail($table_name, $order_id, $status = null)
 {
     global $wpdb;
-    $row = $wpdb->get_row('SELECT * FROM ' . $table_name . ' WHERE order_id=' . $order_id . ' AND status="' . $status . '"');
+    $sql = 'SELECT * FROM ' . $table_name . ' WHERE order_id=' . $order_id;
+    if ($status){
+        $sql .=  ' AND status="' . $status . '"';
+    }
+    $row = $wpdb->get_row($sql);
+    
     if ($row) {
         return true;
     } else {
